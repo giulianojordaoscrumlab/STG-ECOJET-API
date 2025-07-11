@@ -1,0 +1,582 @@
+{
+  "HAVQXF": {
+    "_attributes": {
+      "EchoToken": "465",
+      "TimeStamp": "2025-07-11T17:56:56.741Z",
+      "Target": "Test",
+      "Version": "1.1"
+    },
+    "AirReservation": {
+      "AirItinerary": {
+        "ota:OriginDestinationOptions": {
+          "ota:OriginDestinationOption": {
+            "ota:FlightSegment": {
+              "_attributes": {
+                "ArrivalDateTime": "2025-07-17T20:20:00.000",
+                "DepartureDateTime": "2025-07-17T19:30:00.000",
+                "RPH": "1",
+                "ResBookDesigCode": "B",
+                "Status": "34"
+              },
+              "ota:DepartureAirport": {
+                "_attributes": {
+                  "CodeContext": "IATA",
+                  "LocationCode": "VVI"
+                }
+              },
+              "ota:ArrivalAirport": {
+                "_attributes": {
+                  "CodeContext": "IATA",
+                  "LocationCode": "CBB"
+                }
+              },
+              "ota:OperatingAirline": {
+                "_attributes": {
+                  "Code": "8J",
+                  "FlightNumber": "263"
+                }
+              }
+            }
+          }
+        }
+      },
+      "PriceInfo": {
+        "ota:ItinTotalFare": {
+          "ota:BaseFare": {
+            "_attributes": {
+              "Amount": "385",
+              "CurrencyCode": "BOB",
+              "DecimalPlaces": "0"
+            }
+          },
+          "ota:TotalFare": {
+            "_attributes": {
+              "Amount": "475",
+              "CurrencyCode": "BOB",
+              "DecimalPlaces": "0"
+            }
+          }
+        },
+        "ota:PTC_FareBreakdowns": {
+          "ota:PTC_FareBreakdown": {
+            "ota:PassengerTypeQuantity": {
+              "_attributes": {
+                "Quantity": "1"
+              }
+            },
+            "ota:FareBasisCodes": {
+              "ota:FareBasisCode": {
+                "_text": "BEFSE1"
+              }
+            },
+            "ota:PassengerFare": {
+              "ota:BaseFare": {
+                "_attributes": {
+                  "Amount": "385",
+                  "CurrencyCode": "BOB",
+                  "DecimalPlaces": "0"
+                }
+              },
+              "ota:Taxes": {
+                "ota:Tax": [
+                  {
+                    "_attributes": {
+                      "Amount": "15",
+                      "CurrencyCode": "BOB",
+                      "DecimalPlaces": "0",
+                      "TaxCode": "A7"
+                    }
+                  },
+                  {
+                    "_attributes": {
+                      "Amount": "14",
+                      "CurrencyCode": "BOB",
+                      "DecimalPlaces": "0",
+                      "TaxCode": "QM"
+                    }
+                  }
+                ]
+              },
+              "ota:Fees": {
+                "ota:Fee": {
+                  "_attributes": {
+                    "Amount": "61",
+                    "CurrencyCode": "BOB",
+                    "DecimalPlaces": "0",
+                    "FeeCode": "OB"
+                  }
+                }
+              },
+              "ota:TotalFare": {
+                "_attributes": {
+                  "Amount": "475",
+                  "CurrencyCode": "BOB",
+                  "DecimalPlaces": "0"
+                }
+              }
+            },
+            "ota:TravelerRefNumber": {
+              "_attributes": {
+                "RPH": "1"
+              }
+            }
+          }
+        }
+      },
+      "TravelerInfo": {
+        "ota:AirTraveler": {
+          "_attributes": {
+            "AccompaniedByInfant": "false",
+            "Gender": "Male",
+            "PassengerTypeCode": "ADT"
+          },
+          "ota:ProfileRef": {
+            "ota:UniqueID": {
+              "_attributes": {
+                "ID": "1",
+                "Type": "ZEA"
+              }
+            }
+          },
+          "ota:PersonName": {
+            "ota:NamePrefix": {
+              "_text": "MR"
+            },
+            "ota:GivenName": {
+              "_text": "Jon"
+            },
+            "ota:Surname": {
+              "_text": "Doe"
+            }
+          },
+          "ota:TravelerRefNumber": {
+            "_attributes": {
+              "RPH": "1"
+            }
+          }
+        },
+        "ota:SpecialReqDetails": {
+          "ota:OtherServiceInformations": {
+            "ota:OtherServiceInformation": {
+              "ota:Airline": {
+                "_attributes": {
+                  "CompanyShortName": "8J"
+                }
+              },
+              "ota:Text": {
+                "_text": "#DOE# U01 8J"
+              }
+            }
+          },
+          "ota:SpecialRemarks": {
+            "ota:SpecialRemark": [
+              {
+                "_attributes": {
+                  "RemarkType": "RC"
+                },
+                "ota:Text": {
+                  "_text": "MYIDT-8J*R2*U01"
+                }
+              },
+              {
+                "_attributes": {
+                  "RemarkType": "RC"
+                },
+                "ota:TravelerRefNumber": {
+                  "_attributes": {
+                    "RPH": "1"
+                  }
+                },
+                "ota:Text": {
+                  "_text": "MYIDT-PTC*ZEA"
+                }
+              }
+            ]
+          }
+        }
+      },
+      "BookingReferenceID": {
+        "_attributes": {
+          "ID": "HAVQXF",
+          "Type": "14"
+        }
+      },
+      "Ticketing": [
+        {
+          "_attributes": {
+            "ItemNumber": "1",
+            "TicketNumber": "8747786638246",
+            "TicketingStatus": "3",
+            "Type": "eTicket"
+          }
+        }
+      ]
+    }
+  },
+  "SSEPKWZL": {
+    "_attributes": {
+      "EchoToken": "234",
+      "TimeStamp": "2025-07-11T18:12:43.920Z"
+    },
+    "AirReservation": {
+      "AirItinerary": {
+        "ota:OriginDestinationOptions": {
+          "ota:OriginDestinationOption": {
+            "ota:FlightSegment": {
+              "_attributes": {
+                "ArrivalDateTime": "2025-08-01T20:20:00.000",
+                "DepartureDateTime": "2025-07-16T19:30:00.000",
+                "RPH": "1",
+                "ResBookDesigCode": "X",
+                "Status": "10"
+              },
+              "ota:DepartureAirport": {
+                "_attributes": {
+                  "CodeContext": "IATA",
+                  "LocationCode": "VVI"
+                }
+              },
+              "ota:ArrivalAirport": {
+                "_attributes": {
+                  "CodeContext": "IATA",
+                  "LocationCode": "CBB"
+                }
+              },
+              "ota:OperatingAirline": {
+                "_attributes": {
+                  "Code": "8J",
+                  "FlightNumber": "263"
+                }
+              }
+            }
+          }
+        }
+      },
+      "TravelerInfo": {
+        "ota:AirTraveler": {
+          "_attributes": {
+            "AccompaniedByInfant": "false",
+            "Gender": "Male",
+            "PassengerTypeCode": "ADT"
+          },
+          "ota:ProfileRef": {
+            "ota:UniqueID": {
+              "_attributes": {
+                "ID": "1",
+                "Type": "ZEA"
+              }
+            }
+          },
+          "ota:PersonName": {
+            "ota:NamePrefix": {
+              "_text": "MR"
+            },
+            "ota:GivenName": {
+              "_text": "Jon"
+            },
+            "ota:Surname": {
+              "_text": "Doe"
+            }
+          },
+          "ota:TravelerRefNumber": {
+            "_attributes": {
+              "RPH": "1"
+            }
+          }
+        }
+      },
+      "BookingReferenceID": {
+        "_attributes": {
+          "Type": "SS",
+          "ID": "SSEPKWZL",
+          "ID_Context": "Segment Sell"
+        }
+      }
+    }
+  },
+  "SSPPLKDS": {
+    "_attributes": {
+      "EchoToken": "234",
+      "TimeStamp": "2025-07-11T18:13:10.960Z"
+    },
+    "AirReservation": {
+      "AirItinerary": {
+        "ota:OriginDestinationOptions": {
+          "ota:OriginDestinationOption": {
+            "ota:FlightSegment": {
+              "_attributes": {
+                "ArrivalDateTime": "2025-08-01T20:20:00.000",
+                "DepartureDateTime": "2025-07-16T19:30:00.000",
+                "RPH": "1",
+                "ResBookDesigCode": "X",
+                "Status": "10"
+              },
+              "ota:DepartureAirport": {
+                "_attributes": {
+                  "CodeContext": "IATA",
+                  "LocationCode": "VVI"
+                }
+              },
+              "ota:ArrivalAirport": {
+                "_attributes": {
+                  "CodeContext": "IATA",
+                  "LocationCode": "CBB"
+                }
+              },
+              "ota:OperatingAirline": {
+                "_attributes": {
+                  "Code": "8J",
+                  "FlightNumber": "263"
+                }
+              }
+            }
+          }
+        }
+      },
+      "TravelerInfo": {
+        "ota:AirTraveler": {
+          "_attributes": {
+            "AccompaniedByInfant": "false",
+            "Gender": "Male",
+            "PassengerTypeCode": "ADT"
+          },
+          "ota:ProfileRef": {
+            "ota:UniqueID": {
+              "_attributes": {
+                "ID": "1",
+                "Type": "ZEA"
+              }
+            }
+          },
+          "ota:PersonName": {
+            "ota:NamePrefix": {
+              "_text": "MR"
+            },
+            "ota:GivenName": {
+              "_text": "Jon"
+            },
+            "ota:Surname": {
+              "_text": "Doe"
+            }
+          },
+          "ota:TravelerRefNumber": {
+            "_attributes": {
+              "RPH": "1"
+            }
+          }
+        }
+      },
+      "BookingReferenceID": {
+        "_attributes": {
+          "Type": "SS",
+          "ID": "SSPPLKDS",
+          "ID_Context": "Segment Sell"
+        }
+      }
+    }
+  },
+  "AMHQMH": {
+    "_attributes": {
+      "EchoToken": "465",
+      "TimeStamp": "2025-07-11T18:14:38.399Z",
+      "Target": "Test",
+      "Version": "1.1"
+    },
+    "AirReservation": {
+      "AirItinerary": {
+        "ota:OriginDestinationOptions": {
+          "ota:OriginDestinationOption": {
+            "ota:FlightSegment": {
+              "_attributes": {
+                "ArrivalDateTime": "2025-07-17T20:20:00.000",
+                "DepartureDateTime": "2025-07-17T19:30:00.000",
+                "RPH": "1",
+                "ResBookDesigCode": "B",
+                "Status": "34"
+              },
+              "ota:DepartureAirport": {
+                "_attributes": {
+                  "CodeContext": "IATA",
+                  "LocationCode": "SRE"
+                }
+              },
+              "ota:ArrivalAirport": {
+                "_attributes": {
+                  "CodeContext": "IATA",
+                  "LocationCode": "GYA"
+                }
+              },
+              "ota:OperatingAirline": {
+                "_attributes": {
+                  "Code": "8J",
+                  "FlightNumber": "263"
+                }
+              }
+            }
+          }
+        }
+      },
+      "PriceInfo": {
+        "ota:ItinTotalFare": {
+          "ota:BaseFare": {
+            "_attributes": {
+              "Amount": "385",
+              "CurrencyCode": "BOB",
+              "DecimalPlaces": "0"
+            }
+          },
+          "ota:TotalFare": {
+            "_attributes": {
+              "Amount": "475",
+              "CurrencyCode": "BOB",
+              "DecimalPlaces": "0"
+            }
+          }
+        },
+        "ota:PTC_FareBreakdowns": {
+          "ota:PTC_FareBreakdown": {
+            "ota:PassengerTypeQuantity": {
+              "_attributes": {
+                "Quantity": "1"
+              }
+            },
+            "ota:FareBasisCodes": {
+              "ota:FareBasisCode": {
+                "_text": "BEFSE1"
+              }
+            },
+            "ota:PassengerFare": {
+              "ota:BaseFare": {
+                "_attributes": {
+                  "Amount": "385",
+                  "CurrencyCode": "BOB",
+                  "DecimalPlaces": "0"
+                }
+              },
+              "ota:Taxes": {
+                "ota:Tax": [
+                  {
+                    "_attributes": {
+                      "Amount": "15",
+                      "CurrencyCode": "BOB",
+                      "DecimalPlaces": "0",
+                      "TaxCode": "A7"
+                    }
+                  },
+                  {
+                    "_attributes": {
+                      "Amount": "14",
+                      "CurrencyCode": "BOB",
+                      "DecimalPlaces": "0",
+                      "TaxCode": "QM"
+                    }
+                  }
+                ]
+              },
+              "ota:Fees": {
+                "ota:Fee": {
+                  "_attributes": {
+                    "Amount": "61",
+                    "CurrencyCode": "BOB",
+                    "DecimalPlaces": "0",
+                    "FeeCode": "OB"
+                  }
+                }
+              },
+              "ota:TotalFare": {
+                "_attributes": {
+                  "Amount": "475",
+                  "CurrencyCode": "BOB",
+                  "DecimalPlaces": "0"
+                }
+              }
+            },
+            "ota:TravelerRefNumber": {
+              "_attributes": {
+                "RPH": "1"
+              }
+            }
+          }
+        }
+      },
+      "TravelerInfo": {
+        "ota:AirTraveler": {
+          "_attributes": {
+            "AccompaniedByInfant": "false",
+            "Gender": "Male",
+            "PassengerTypeCode": "ADT"
+          },
+          "ota:ProfileRef": {
+            "ota:UniqueID": {
+              "_attributes": {
+                "ID": "1",
+                "Type": "ZEA"
+              }
+            }
+          },
+          "ota:PersonName": {
+            "ota:NamePrefix": {
+              "_text": "MR"
+            },
+            "ota:GivenName": {
+              "_text": "Jon"
+            },
+            "ota:Surname": {
+              "_text": "Doe"
+            }
+          },
+          "ota:TravelerRefNumber": {
+            "_attributes": {
+              "RPH": "1"
+            }
+          }
+        },
+        "ota:SpecialReqDetails": {
+          "ota:OtherServiceInformations": {
+            "ota:OtherServiceInformation": {
+              "ota:Airline": {
+                "_attributes": {
+                  "CompanyShortName": "8J"
+                }
+              },
+              "ota:Text": {
+                "_text": "#DOE# U01 8J"
+              }
+            }
+          },
+          "ota:SpecialRemarks": {
+            "ota:SpecialRemark": [
+              {
+                "_attributes": {
+                  "RemarkType": "RC"
+                },
+                "ota:Text": {
+                  "_text": "MYIDT-8J*R2*U01"
+                }
+              },
+              {
+                "_attributes": {
+                  "RemarkType": "RC"
+                },
+                "ota:TravelerRefNumber": {
+                  "_attributes": {
+                    "RPH": "1"
+                  }
+                },
+                "ota:Text": {
+                  "_text": "MYIDT-PTC*ZEA"
+                }
+              }
+            ]
+          }
+        }
+      },
+      "BookingReferenceID": {
+        "_attributes": {
+          "ID": "AMHQMH",
+          "Type": "14"
+        }
+      }
+    }
+  }
+}

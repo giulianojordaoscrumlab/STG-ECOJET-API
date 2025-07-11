@@ -1,0 +1,506 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2017 sp2 (x64) (http://www.altova.com) by Daniel Bub (Lufthansa Industry Solutions AS GmbH) -->
+<wsdl:definitions xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ns="http://service.resadapter.myidtravel.lhsystems.com" xmlns:ns1="http://bos.service.resadapter.myidtravel.lhsystems.com" xmlns:ns2="http://www.opentravel.org/OTA/2003/05" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" targetNamespace="http://service.resadapter.myidtravel.lhsystems.com">
+	<wsdl:documentation>RES Adapter Technical Specification Version 1.9 ; $Id$</wsdl:documentation>
+	<wsdl:types>
+		<xs:schema version="1.1" attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://service.resadapter.myidtravel.lhsystems.com" xmlns:ns0="http://bos.service.resadapter.myidtravel.lhsystems.com" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+			<xs:import namespace="http://bos.service.resadapter.myidtravel.lhsystems.com" schemaLocation="MyIdTravelResAdapter.xsd"/>
+			<xs:element name="availabilityRequest" type="ns0:MyIDTravelResAdapterAvailabilityRequest"/>
+			<xs:element name="availabilityResponse" type="ns0:MyIDTravelResAdapterAvailabilityResponse"/>
+			<xs:element name="segmentSellRequest" type="ns0:MyIDTravelResAdapterSegmentSellRequest"/>
+			<xs:element name="segmentSellResponse" type="ns0:MyIDTravelResAdapterSegmentSellResponse"/>
+			<xs:element name="cancelSegmentSellRequest" type="ns0:MyIDTravelResAdapterCancelSegmentSellRequest"/>
+			<xs:element name="cancelSegmentSellResponse" type="ns0:MyIDTravelResAdapterCancelSegmentSellResponse"/>
+			<xs:element name="bookingRequest" type="ns0:MyIDTravelResAdapterBookingRequest"/>
+			<xs:element name="bookingResponse" type="ns0:MyIDTravelResAdapterBookingResponse"/>
+			<xs:element name="modifyBookingRequest" type="ns0:MyIDTravelResAdapterBookingModifyRequest"/>
+			<xs:element name="modifyBookingResponse" type="ns0:MyIDTravelResAdapterBookingModifyResponse"/>
+			<xs:element name="retrieveBookingRequest" type="ns0:MyIDTravelResAdapterRetrieveBookingRequest"/>
+			<xs:element name="retrieveBookingResponse" type="ns0:MyIDTravelResAdapterRetrieveBookingResponse"/>
+			<xs:element name="createTicketRequest" type="ns0:MyIDTravelResAdapterCreateTicketRequest"/>
+			<xs:element name="createTicketResponse" type="ns0:MyIDTravelResAdapterCreateTicketResponse"/>
+			<xs:element name="pricingRequest" type="ns0:MyIDTravelResAdapterPricingRequest"/>
+			<xs:element name="pricingResponse" type="ns0:MyIDTravelResAdapterPricingResponse"/>
+			<xs:element name="retrieveTicketRequest" type="ns0:MyIDTravelResAdapterRetrieveTicketRequest"/>
+			<xs:element name="retrieveTicketResponse" type="ns0:MyIDTravelResAdapterRetrieveTicketResponse"/>
+			<xs:element name="initRefundTicketRequest" type="ns0:MyIDTravelResAdapterInitRefundTicketRequest"/>
+			<xs:element name="initRefundTicketResponse" type="ns0:MyIDTravelResAdapterInitRefundTicketResponse"/>
+			<xs:element name="updateRefundTicketRequest" type="ns0:MyIDTravelResAdapterUpdateRefundTicketRequest"/>
+			<xs:element name="updateRefundTicketResponse" type="ns0:MyIDTravelResAdapterUpdateRefundTicketResponse"/>
+			<xs:element name="confirmRefundTicketRequest" type="ns0:MyIDTravelResAdapterConfirmRefundTicketRequest"/>
+			<xs:element name="confirmRefundTicketResponse" type="ns0:MyIDTravelResAdapterConfirmRefundTicketResponse"/>
+			<xs:element name="cancelBookingRequest" type="ns0:MyIDTravelResAdapterCancelBookingRequest"/>
+			<xs:element name="cancelBookingResponse" type="ns0:MyIDTravelResAdapterCancelBookingResponse"/>
+			<xs:element name="pingRequest" type="ns0:MyIDTravelResAdapterPingRequest"/>
+			<xs:element name="pingResponse" type="ns0:MyIDTravelResAdapterPingResponse"/>
+			<xs:element name="splitPnrRequest" type="ns0:MyIDTravelResAdapterSplitPnrRequest"/>
+			<xs:element name="splitPnrResponse" type="ns0:MyIDTravelResAdapterSplitPnrResponse"/>
+			<xs:element name="availabilityDetailsRequest" type="ns0:MyIDTravelResAdapterAvailabilityDetailsRequest"/>
+			<xs:element name="availabilityDetailsResponse" type="ns0:MyIDTravelResAdapterAvailabilityDetailsResponse"/>
+		</xs:schema>
+	</wsdl:types>
+	<wsdl:message name="availabilityRequest">
+		<wsdl:part name="part1" element="ns:availabilityRequest"/>
+	</wsdl:message>
+	<wsdl:message name="availabilityResponse">
+		<wsdl:part name="part1" element="ns:availabilityResponse"/>
+	</wsdl:message>
+	<wsdl:message name="segmentSellRequest">
+		<wsdl:part name="part1" element="ns:segmentSellRequest"/>
+	</wsdl:message>
+	<wsdl:message name="segmentSellResponse">
+		<wsdl:part name="part1" element="ns:segmentSellResponse"/>
+	</wsdl:message>
+	<wsdl:message name="cancelSegmentSellRequest">
+		<wsdl:part name="part1" element="ns:cancelSegmentSellRequest"/>
+	</wsdl:message>
+	<wsdl:message name="cancelSegmentSellResponse">
+		<wsdl:part name="part1" element="ns:cancelSegmentSellResponse"/>
+	</wsdl:message>
+	<wsdl:message name="bookingRequest">
+		<wsdl:part name="part1" element="ns:bookingRequest"/>
+	</wsdl:message>
+	<wsdl:message name="bookingResponse">
+		<wsdl:part name="part1" element="ns:bookingResponse"/>
+	</wsdl:message>
+	<wsdl:message name="modifyBookingRequest">
+		<wsdl:part name="part1" element="ns:modifyBookingRequest"/>
+	</wsdl:message>
+	<wsdl:message name="modifyBookingResponse">
+		<wsdl:part name="part1" element="ns:modifyBookingResponse"/>
+	</wsdl:message>
+	<wsdl:message name="retrieveBookingRequest">
+		<wsdl:part name="part1" element="ns:retrieveBookingRequest"/>
+	</wsdl:message>
+	<wsdl:message name="retrieveBookingResponse">
+		<wsdl:part name="part1" element="ns:retrieveBookingResponse"/>
+	</wsdl:message>
+	<wsdl:message name="createTicketRequest">
+		<wsdl:part name="part1" element="ns:createTicketRequest"/>
+	</wsdl:message>
+	<wsdl:message name="createTicketResponse">
+		<wsdl:part name="part1" element="ns:createTicketResponse"/>
+	</wsdl:message>
+	<wsdl:message name="pricingRequest">
+		<wsdl:part name="part1" element="ns:pricingRequest"/>
+	</wsdl:message>
+	<wsdl:message name="pricingResponse">
+		<wsdl:part name="part1" element="ns:pricingResponse"/>
+	</wsdl:message>
+	<wsdl:message name="retrieveTicketRequest">
+		<wsdl:part name="part1" element="ns:retrieveTicketRequest"/>
+	</wsdl:message>
+	<wsdl:message name="retrieveTicketResponse">
+		<wsdl:part name="part1" element="ns:retrieveTicketResponse"/>
+	</wsdl:message>
+	<wsdl:message name="initRefundTicketRequest">
+		<wsdl:part name="part1" element="ns:initRefundTicketRequest"/>
+	</wsdl:message>
+	<wsdl:message name="initRefundTicketResponse">
+		<wsdl:part name="part1" element="ns:initRefundTicketResponse"/>
+	</wsdl:message>
+	<wsdl:message name="updateRefundTicketRequest">
+		<wsdl:part name="part1" element="ns:updateRefundTicketRequest"/>
+	</wsdl:message>
+	<wsdl:message name="updateRefundTicketResponse">
+		<wsdl:part name="part1" element="ns:updateRefundTicketResponse"/>
+	</wsdl:message>
+	<wsdl:message name="confirmRefundTicketRequest">
+		<wsdl:part name="part1" element="ns:confirmRefundTicketRequest"/>
+	</wsdl:message>
+	<wsdl:message name="confirmRefundTicketResponse">
+		<wsdl:part name="part1" element="ns:confirmRefundTicketResponse"/>
+	</wsdl:message>
+	<wsdl:message name="cancelBookingRequest">
+		<wsdl:part name="part1" element="ns:cancelBookingRequest"/>
+	</wsdl:message>
+	<wsdl:message name="cancelBookingResponse">
+		<wsdl:part name="part1" element="ns:cancelBookingResponse"/>
+	</wsdl:message>
+	<wsdl:message name="pingRequest">
+		<wsdl:part name="part1" element="ns:pingRequest"/>
+	</wsdl:message>
+	<wsdl:message name="pingResponse">
+		<wsdl:part name="part1" element="ns:pingResponse"/>
+	</wsdl:message>
+	<wsdl:message name="splitPnrRequest">
+		<wsdl:part name="part1" element="ns:splitPnrRequest"/>
+	</wsdl:message>
+	<wsdl:message name="splitPnrResponse">
+		<wsdl:part name="part1" element="ns:splitPnrResponse"/>
+	</wsdl:message>
+	<wsdl:message name="availabilityDetailsRequest">
+		<wsdl:part name="part1" element="ns:availabilityDetailsRequest"/>
+	</wsdl:message>
+	<wsdl:message name="availabilityDetailsResponse">
+		<wsdl:part name="part1" element="ns:availabilityDetailsResponse"/>
+	</wsdl:message>
+	<wsdl:portType name="RESAdapterServicePortType">
+		<wsdl:operation name="getAvailability">
+			<wsdl:input message="ns:availabilityRequest" wsaw:Action="urn:getAvailability"/>
+			<wsdl:output message="ns:availabilityResponse" wsaw:Action="urn:getAvailability"/>
+		</wsdl:operation>
+		<wsdl:operation name="doSegmentSell">
+			<wsdl:input message="ns:segmentSellRequest" wsaw:Action="urn:doSegmentSell"/>
+			<wsdl:output message="ns:segmentSellResponse" wsaw:Action="urn:doSegmentSell"/>
+		</wsdl:operation>
+		<wsdl:operation name="cancelSegmentSell">
+			<wsdl:input message="ns:cancelSegmentSellRequest" wsaw:Action="urn:cancelSegmentSell"/>
+			<wsdl:output message="ns:cancelSegmentSellResponse" wsaw:Action="urn:cancelSegmentSell"/>
+		</wsdl:operation>
+		<wsdl:operation name="book">
+			<wsdl:input message="ns:bookingRequest" wsaw:Action="urn:book"/>
+			<wsdl:output message="ns:bookingResponse" wsaw:Action="urn:book"/>
+		</wsdl:operation>
+		<wsdl:operation name="modifyBooking">
+			<wsdl:input message="ns:modifyBookingRequest" wsaw:Action="urn:modifyBooking"/>
+			<wsdl:output message="ns:modifyBookingResponse" wsaw:Action="urn:modifyBooking"/>
+		</wsdl:operation>
+		<wsdl:operation name="retrieveBooking">
+			<wsdl:input message="ns:retrieveBookingRequest" wsaw:Action="urn:retrieveBooking"/>
+			<wsdl:output message="ns:retrieveBookingResponse" wsaw:Action="urn:retrieveBooking"/>
+		</wsdl:operation>
+		<wsdl:operation name="createTicket">
+			<wsdl:input message="ns:createTicketRequest" wsaw:Action="urn:createTicket"/>
+			<wsdl:output message="ns:createTicketResponse" wsaw:Action="urn:createTicket"/>
+		</wsdl:operation>
+		<wsdl:operation name="pricing">
+			<wsdl:input message="ns:pricingRequest" wsaw:Action="urn:pricing"/>
+			<wsdl:output message="ns:pricingResponse" wsaw:Action="urn:pricing"/>
+		</wsdl:operation>
+		<wsdl:operation name="retrieveTicket">
+			<wsdl:input message="ns:retrieveTicketRequest" wsaw:Action="urn:retrieveTicket"/>
+			<wsdl:output message="ns:retrieveTicketResponse" wsaw:Action="urn:retrieveTicket"/>
+		</wsdl:operation>
+		<wsdl:operation name="initRefundTicket">
+			<wsdl:input message="ns:initRefundTicketRequest" wsaw:Action="urn:initRefundTicket"/>
+			<wsdl:output message="ns:initRefundTicketResponse" wsaw:Action="urn:initRefundTicket"/>
+		</wsdl:operation>
+		<wsdl:operation name="updateRefundTicket">
+			<wsdl:input message="ns:updateRefundTicketRequest" wsaw:Action="urn:updateRefundTicket"/>
+			<wsdl:output message="ns:updateRefundTicketResponse" wsaw:Action="urn:updateRefundTicket"/>
+		</wsdl:operation>
+		<wsdl:operation name="confirmRefundTicket">
+			<wsdl:input message="ns:confirmRefundTicketRequest" wsaw:Action="urn:confirmRefundTicket"/>
+			<wsdl:output message="ns:confirmRefundTicketResponse" wsaw:Action="urn:confirmRefundTicket"/>
+		</wsdl:operation>
+		<wsdl:operation name="cancelBooking">
+			<wsdl:input message="ns:cancelBookingRequest" wsaw:Action="urn:cancelBooking"/>
+			<wsdl:output message="ns:cancelBookingResponse" wsaw:Action="urn:cancelBooking"/>
+		</wsdl:operation>
+		<wsdl:operation name="ping">
+			<wsdl:input message="ns:pingRequest" wsaw:Action="urn:ping"/>
+			<wsdl:output message="ns:pingResponse" wsaw:Action="urn:ping"/>
+		</wsdl:operation>
+		<wsdl:operation name="splitPnr">
+			<wsdl:input message="ns:splitPnrRequest" wsaw:Action="urn:splitPnr"/>
+			<wsdl:output message="ns:splitPnrResponse" wsaw:Action="urn:splitPnr"/>
+		</wsdl:operation>
+		<wsdl:operation name="availabilityDetails">
+			<wsdl:input message="ns:availabilityDetailsRequest" wsaw:Action="urn:availabilityDetails"/>
+			<wsdl:output message="ns:availabilityDetailsResponse" wsaw:Action="urn:availabilityDetails"/>
+		</wsdl:operation>
+	</wsdl:portType>
+	<wsdl:binding name="RESAdapterServiceSOAP11Binding" type="ns:RESAdapterServicePortType">
+		<soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+		<wsdl:operation name="getAvailability">
+			<soap:operation soapAction="urn:getAvailability" style="document"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="doSegmentSell">
+			<soap:operation soapAction="urn:doSegmentSell" style="document"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="cancelSegmentSell">
+			<soap:operation soapAction="urn:cancelSegmentSell" style="document"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="book">
+			<soap:operation soapAction="urn:book" style="document"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="modifyBooking">
+			<soap:operation soapAction="urn:modifyBooking" style="document"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="retrieveBooking">
+			<soap:operation soapAction="urn:retrieveBooking" style="document"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="createTicket">
+			<soap:operation soapAction="urn:createTicket" style="document"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="pricing">
+			<soap:operation soapAction="urn:pricing" style="document"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="retrieveTicket">
+			<soap:operation soapAction="urn:retrieveTicket" style="document"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="initRefundTicket">
+			<soap:operation soapAction="urn:initRefundTicket" style="document"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="updateRefundTicket">
+			<soap:operation soapAction="urn:updateRefundTicket" style="document"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="confirmRefundTicket">
+			<soap:operation soapAction="urn:confirmRefundTicket" style="document"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="cancelBooking">
+			<soap:operation soapAction="urn:cancelBooking" style="document"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="ping">
+			<soap:operation soapAction="urn:ping" style="document"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="splitPnr">
+			<soap:operation soapAction="urn:splitPnr" style="document"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="availabilityDetails">
+			<soap:operation soapAction="urn:availabilityDetails" style="document"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+	</wsdl:binding>
+	<wsdl:binding name="RESAdapterServiceSOAP12Binding" type="ns:RESAdapterServicePortType">
+		<soap12:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+		<wsdl:operation name="getAvailability">
+			<soap12:operation soapAction="urn:getAvailability" style="document"/>
+			<wsdl:input>
+				<soap12:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap12:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="doSegmentSell">
+			<soap12:operation soapAction="urn:doSegmentSell" style="document"/>
+			<wsdl:input>
+				<soap12:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap12:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="cancelSegmentSell">
+			<soap12:operation soapAction="urn:cancelSegmentSell" style="document"/>
+			<wsdl:input>
+				<soap12:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap12:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="book">
+			<soap12:operation soapAction="urn:book" style="document"/>
+			<wsdl:input>
+				<soap12:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap12:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="modifyBooking">
+			<soap12:operation soapAction="urn:modifyBooking" style="document"/>
+			<wsdl:input>
+				<soap12:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap12:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="retrieveBooking">
+			<soap12:operation soapAction="urn:retrieveBooking" style="document"/>
+			<wsdl:input>
+				<soap12:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap12:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="createTicket">
+			<soap12:operation soapAction="urn:createTicket" style="document"/>
+			<wsdl:input>
+				<soap12:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap12:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="pricing">
+			<soap12:operation soapAction="urn:pricing" style="document"/>
+			<wsdl:input>
+				<soap12:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap12:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="retrieveTicket">
+			<soap12:operation soapAction="urn:retrieveTicket" style="document"/>
+			<wsdl:input>
+				<soap12:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap12:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="initRefundTicket">
+			<soap12:operation soapAction="urn:initRefundTicket" style="document"/>
+			<wsdl:input>
+				<soap12:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap12:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="updateRefundTicket">
+			<soap12:operation soapAction="urn:updateRefundTicket" style="document"/>
+			<wsdl:input>
+				<soap12:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap12:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="confirmRefundTicket">
+			<soap12:operation soapAction="urn:confirmRefundTicket" style="document"/>
+			<wsdl:input>
+				<soap12:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap12:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="cancelBooking">
+			<soap12:operation soapAction="urn:cancelBooking" style="document"/>
+			<wsdl:input>
+				<soap12:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap12:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="ping">
+			<soap12:operation soapAction="urn:ping" style="document"/>
+			<wsdl:input>
+				<soap12:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap12:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="splitPnr">
+			<soap12:operation soapAction="urn:splitPnr" style="document"/>
+			<wsdl:input>
+				<soap12:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap12:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="availabilityDetails">
+			<soap12:operation soapAction="urn:availabilityDetails" style="document"/>
+			<wsdl:input>
+				<soap12:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap12:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+	</wsdl:binding>
+	<wsdl:service name="RESAdapterService">
+		<wsdl:port name="RESAdapterServiceSOAP11port" binding="ns:RESAdapterServiceSOAP11Binding">
+			<soap:address location="http://localhost:8080/axis2/services/RESAdapterService"/>
+		</wsdl:port>
+		<wsdl:port name="RESAdapterServiceSOAP12port" binding="ns:RESAdapterServiceSOAP12Binding">
+			<soap12:address location="http://localhost:8080/axis2/services/RESAdapterService"/>
+		</wsdl:port>
+	</wsdl:service>
+</wsdl:definitions>

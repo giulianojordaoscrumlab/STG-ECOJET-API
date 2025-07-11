@@ -1,0 +1,24 @@
+{
+  "name": "ecojet_stg_api",
+  "version": "1.0.0",
+  "description": "Mock SOAP API for myIDTravel based on resAdapter for Ecojet.",
+  "main": "stageapi-ecojet.js",
+  "scripts": {
+    "start": "node stageapi-ecojet.js",
+    "dev": "nodemon stageapi-ecojet.js"
+  },
+  "author": {
+    "name": "Ketlen e Giuliano Jordão",
+    "email": "desenvolvimento@scrumlab.com.br",
+    "url": "https://scrumlab.com.br"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "xml-js": "^1.6.11"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.20"
+  }
+}
