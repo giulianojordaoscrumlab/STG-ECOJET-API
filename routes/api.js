@@ -33,17 +33,17 @@ router.post('/', (req, res) => {
 
     case 'ns2:availabilityRequest':
     case 'availabilityRequest':
-      responseJson = resAdapterController.getAvailability(req.soap);
+      responseJson = resAdapterController.getAvailability(soapBody);
       break;
 
     case 'ns2:availabilityDetailsRequest':
     case 'availabilityDetailsRequest':
-      responseJson = resAdapterController.getAvailabilityDetails(req.soap);
+      responseJson = resAdapterController.getAvailabilityDetails(soapBody);
       break;
 
     case 'ns2:segmentSellRequest':
     case 'doSegmentSell':
-      responseJson = resAdapterController.doSegmentSell(req.soap);
+      responseJson = resAdapterController.doSegmentSell(soapBody);
       break;
 
     case 'ns2:initRefundTicketRequest':
