@@ -1,6 +1,6 @@
 const dbService = require('../services/dbService');
 const { MOCK_FLIGHT_SCHEDULE } = require("../data/mockEcojetFlightSegments");
-const { generatePnr } = require("../utils/generalFunctions");
+const { generatePnr, generateSegmentSellId, generateTicketNumber } = require("../utils/generalFunctions");
 
 // controllers/resAdapterController.js
 
@@ -59,24 +59,24 @@ function getAvailability(soapBody) {
                 const departureTime = new Date(`${requestedDate}T${time}`);
                 const arrivalTime = new Date(departureTime.getTime() + flight.durationMinutes * 60000);
                 flightOptions.push({
-                    'OriginDestinationOption': {
-                        'FlightSegment': {
+                    'ota:OriginDestinationOption': {
+                        'ota:FlightSegment': {
                             _attributes: { DepartureDateTime: departureTime.toISOString(), ArrivalDateTime: arrivalTime.toISOString(), FlightNumber: flight.flightNumber, JourneyDuration: `PT${flight.durationMinutes}M`, StopQuantity: "0", Ticket: "eTicket" },
-                            'DepartureAirport': { _attributes: { LocationCode: flight.origin, CodeContext: "IATA" } },
-                            'ArrivalAirport': { _attributes: { LocationCode: flight.destination, CodeContext: "IATA" } },
-                            'OperatingAirline': { _attributes: { CompanyShortName: '8J' } },
-                            'BookingClassAvail': [{ _attributes: { ResBookDesigCode: "Y", ResBookDesigQuantity: "9" } }, { _attributes: { ResBookDesigCode: "B", ResBookDesigQuantity: "5" } }],
-                            'Equipment': { _attributes: { AirEquipType: flight.equipment } }
+                            'ota:DepartureAirport': { _attributes: { LocationCode: flight.origin, CodeContext: "IATA" } },
+                            'ota:ArrivalAirport': { _attributes: { LocationCode: flight.destination, CodeContext: "IATA" } },
+                            'ota:OperatingAirline': { _attributes: { CompanyShortName: '8J' } },
+                            'ota:BookingClassAvail': [{ _attributes: { ResBookDesigCode: "Y", ResBookDesigQuantity: "9" } }, { _attributes: { ResBookDesigCode: "B", ResBookDesigQuantity: "5" } }],
+                            'ota:Equipment': { _attributes: { AirEquipType: flight.equipment } }
                         }
                     }
                 });
             });
         });
         return {
-            'OriginDestinationOptions': flightOptions,
-            'DepartureDateTime': { _text: departureDateTime },
-            'OriginLocation': { _attributes: { LocationCode: origin, CodeContext: "IATA" } },
-            'DestinationLocation': { _attributes: { LocationCode: destination, CodeContext: "IATA" } }
+            'ota:OriginDestinationOptions': flightOptions,
+            'ota:DepartureDateTime': { _text: departureDateTime },
+            'ota:OriginLocation': { _attributes: { LocationCode: origin, CodeContext: "IATA" } },
+            'ota:DestinationLocation': { _attributes: { LocationCode: destination, CodeContext: "IATA" } }
         };
     });
 
@@ -138,43 +138,72 @@ function getAvailabilityDetails(fullSoapRequest) {
 //     };
 //     return responseBody;
 // }
+
 /**
  * --- ATUALIZADO ---
  * Manipula a requisição de doSegmentSell.
- * Agora salva um estado de pré-reserva no DB.
- * Baseado na seção 5 do PDF.
+ * Adiciona os prefixos 'ota:' que faltavam nos nós filhos de AirReservation.
  */
-function doSegmentSell(soapBodyRequest) {
-    const soapBody = soapBodyRequest["SOAP-ENV:Envelope"]["SOAP-ENV:Body"]["ns2:segmentSellRequest"];
-    const otaRequest = soapBody?.['ota:OTA_AirBookRQ'];
+function doSegmentSell(soapBody) {
+    const otaRequest = soapBody["SOAP-ENV:Envelope"]["SOAP-ENV:Body"]["ns2:segmentSellRequest"]["ota:OTA_AirBookRQ"];
     const echoToken = otaRequest?._attributes?.EchoToken || 'mock-ss-token';
     const newSegmentSellId = generatePnr();
 
-    // 1. Monta o objeto que será salvo no DB.
-    // Usamos a estrutura da resposta (AirReservation) para armazenar os dados.
-    const segmentSellToSave = {
-        _attributes: { EchoToken: echoToken, TimeStamp: new Date().toISOString() },
-        'AirReservation': {
-            'AirItinerary': otaRequest['ota:AirItinerary'],
-            'TravelerInfo': otaRequest['ota:TravelerInfo'],
-            'BookingReferenceID': {
-                _attributes: { Type: "SS", ID: newSegmentSellId, ID_Context: "Segment Sell" }
-            }
+    // 1. Clona o itinerário da requisição para poder modificá-lo para a resposta
+    const airItineraryForResponse = JSON.parse(JSON.stringify(otaRequest['ota:AirItinerary']));
+    
+    // 2. Itera sobre os segmentos para adicionar os atributos que faltam
+    const segmentsNode = airItineraryForResponse?.['ota:OriginDestinationOptions']?.['ota:OriginDestinationOption']?.['ota:FlightSegment'] || [];
+    const segmentsArray = Array.isArray(segmentsNode) ? segmentsNode : [segmentsNode];
+    
+    segmentsArray.forEach(segment => {
+        // ATUALIZAÇÃO 1: Muda o status para "26" (Confirmado)
+        segment._attributes.Status = "26";
+        // ATUALIZAÇÃO 2: Adiciona os atributos Ticket e NumberInParty
+        segment._attributes.Ticket = "eTicket";
+        segment._attributes.NumberInParty = "1";
+        // ATUALIZAÇÃO 3: Adiciona CompanyShortName na OperatingAirline
+        if(segment['ota:OperatingAirline']?._attributes) {
+            segment['ota:OperatingAirline']._attributes.CompanyShortName = segment['ota:OperatingAirline']._attributes.Code;
+        }
+    });
+
+    // 3. Monta o objeto que será salvo no DB e usado na resposta
+    const airReservationData = {
+        'ota:AirItinerary': airItineraryForResponse,
+        'ota:TravelerInfo': otaRequest['ota:TravelerInfo'],
+        'ota:BookingReferenceID': {
+            _attributes: { Type: "SS", ID: newSegmentSellId, ID_Context: "Segment Sell" }
         }
     };
 
-    // 2. Salva a pré-reserva no nosso "banco de dados" JSON
-    dbService.saveBooking(newSegmentSellId, segmentSellToSave);
+    dbService.saveBooking(newSegmentSellId, airReservationData);
     console.log(`Segment Sell com ID ${newSegmentSellId} foi salvo no mockDatabase.json`);
 
-    // 3. Monta a resposta final, que é o mesmo objeto que salvamos
+    // 4. Monta a resposta final com a estrutura e atributos corretos
     const responseBody = {
-        'OTA_AirBookRS': segmentSellToSave
+        // ATUALIZAÇÃO 4: Corrige o nome do wrapper para 'segmentSellResponse'
+        'ns2:segmentSellResponse': {
+             _attributes: { 
+                'xmlns:ns2': 'http://service.resadapter.myidtravel.lhsystems.com',
+                'xmlns:ota': 'http://www.opentravel.org/OTA/2003/05'
+             },
+             'ota:OTA_AirBookRS': {
+                // ATUALIZAÇÃO 5: Adiciona os atributos Target e Version
+                _attributes: { 
+                    EchoToken: echoToken, 
+                    TimeStamp: new Date().toISOString(),
+                    Target: "Test",
+                    Version: "1.1"
+                },
+                'ota:Success': {},
+                'ota:Warnings': {},
+                'ota:AirReservation': airReservationData
+             }
+        }
     };
-
     return responseBody;
 }
-
 
 // /**
 //  * Manipula a requisição de booking.
@@ -233,101 +262,142 @@ function doSegmentSell(soapBodyRequest) {
  * Manipula a requisição de booking. Agora salva a reserva no DB.
 */
 function booking(soapBody) {
-    const otaRequest = soapBody?.['ns2:bookingRequest']?.['ota:OTA_AirBookRQ'];
-    const newPnrId = generatePnr();
+    const bookingRequest = soapBody['ns2:bookingRequest'];
+    const otaRequest = bookingRequest['ota:OTA_AirBookRQ'];
+    const employeeData = bookingRequest['myid:employeeData'];
+    const contactDetails = bookingRequest['myid:bookingContactDetails'];
 
-    // 1. Cria o objeto da reserva que será salvo
-    const bookingToSave = {
-        _attributes: { EchoToken: otaRequest._attributes.EchoToken, TimeStamp: new Date().toISOString(), Target: 'Test', Version: '1.1' },
-        'AirReservation': {
-            'AirItinerary': otaRequest['ota:AirItinerary'],
-            'PriceInfo': otaRequest['ota:PriceInfo'],
-            'TravelerInfo': otaRequest['ota:TravelerInfo'],
-            'BookingReferenceID': { _attributes: { ID: newPnrId, Type: '14' } }
-        }
+    const newPnrId = generatePnr();
+    const travelersNode = otaRequest['ota:TravelerInfo']['ota:AirTraveler'] || [];
+    const travelersArray = Array.isArray(travelersNode) ? travelersNode : [travelersNode];
+
+    const ticketingBlocks = travelersArray.map(traveler => {
+        const rph = traveler['ota:TravelerRefNumber']._attributes.RPH;
+        const newTicketNumber = generateTicketNumber();
+        return {
+            _attributes: { TicketType: "eTicket", TicketingStatus: "3", TravelerRefNumber: rph },
+            'ota:TicketAdvisory': { _text: newTicketNumber }
+        };
+    });
+
+    // Objeto salvo no DB - precisa ser completo para o retrieveBooking funcionar
+    const airReservationData = {
+        'ota:AirItinerary': otaRequest['ota:AirItinerary'],
+        'ota:PriceInfo': otaRequest['ota:PriceInfo'], // Incluindo para salvar
+        'ota:TravelerInfo': otaRequest['ota:TravelerInfo'],
+        'ota:Fulfillment': otaRequest['ota:Fulfillment'], // Incluindo para salvar
+        'ota:Ticketing': ticketingBlocks,
+        'ota:BookingReferenceID': { _attributes: { ID: newPnrId, Type: "14" } }
     };
 
-    // 2. Salva a reserva no nosso "banco de dados" JSON
-    dbService.saveBooking(newPnrId, bookingToSave);
-    console.log(`Reserva com PNR ${newPnrId} foi salva no mockDatabase.json`);
+    const bookingToSaveInDb = {
+        employeeData,
+        contactDetails,
+        otaAirBookRS: {
+            _attributes: { EchoToken: otaRequest._attributes.EchoToken, TimeStamp: new Date().toISOString(), Target: "Test", Version: "1.1" },
+            AirReservation: airReservationData
+        }
+    };
+    dbService.saveBooking(newPnrId, bookingToSaveInDb);
 
-    // 3. Monta a resposta final
+    // Objeto para a resposta imediata (simplificado, como no gabarito)
+    const airReservationForResponse = {
+        'ota:AirItinerary': otaRequest['ota:AirItinerary'],
+        'ota:TravelerInfo': otaRequest['ota:TravelerInfo'],
+        'ota:Ticketing': ticketingBlocks,
+        'ota:BookingReferenceID': { _attributes: { ID: newPnrId, Type: "14" } }
+    };
+    
     const responseBody = {
-        'bookingResponse': {
-            _attributes: { xmlns: 'http://service.resadapter.myidtravel.lhsystems.com' },
-            'employeeData': soapBody?.['ns2:bookingRequest']?.['myid:employeeData'],
-            'OTA_AirBookRS': bookingToSave
+        'ns2:bookingResponse': {
+            _attributes: { 'xmlns:ns2': "http://service.resadapter.myidtravel.lhsystems.com", 'xmlns:myid': "http://bos.service.resadapter.myidtravel.lhsystems.com", 'xmlns:ota': "http://www.opentravel.org/OTA/2003/05" },
+            'myid:employeeData': employeeData,
+            'myid:bookingContactDetails': contactDetails,
+            'ota:OTA_AirBookRS': {
+                _attributes: { EchoToken: otaRequest._attributes.EchoToken, TimeStamp: new Date().toISOString(), Target: "Test", Version: "1.1" },
+                'ota:AirReservation': airReservationForResponse
+            }
         }
     };
     return responseBody;
 }
-
 /**
+ * --- ATUALIZADO ---
  * Manipula a requisição de pricing.
- * Retorna um mock com as taxas aplicáveis.
- * Baseado na seção 7.4.3 do PDF.
+ * Adiciona os prefixos 'ota:' que faltavam em toda a estrutura da resposta.
  */
 function pricing(soapBody) {
-    const pricingRequest = soapBody?.['ns2:pricingRequest'];
-    const otaRequest = pricingRequest?.['ota:OTA_AirPriceRQ'];
-    const employeeData = pricingRequest?.['myid:employeeData'];
-
-    const echoToken = otaRequest?._attributes?.EchoToken || 'mock-token-price';
-    const itinerary = otaRequest?.['ota:AirItinerary'];
+    const pricingRequest = soapBody['ns2:pricingRequest'];
+    const otaRequest = pricingRequest['ota:OTA_AirPriceRQ'];
+    const employeeData = pricingRequest['myid:employeeData'];
     
-    // --- CORREÇÃO APLICADA AQUI ---
-    // Garante que 'travelers' e 'segments' sejam sempre arrays.
-
-    // 1. Normaliza os viajantes para um array
+    // Extração de dados dinâmicos da requisição
+    const echoToken = otaRequest?._attributes?.EchoToken;
+    const itineraryFromRequest = otaRequest['ota:AirItinerary'];
     const travelersNode = otaRequest?.['ota:TravelerInfoSummary']?.['ota:AirTravelerAvail'] || [];
     const travelersArray = Array.isArray(travelersNode) ? travelersNode : [travelersNode];
-    const travelerRefNumbers = travelersArray.map(t => t?.['ota:AirTraveler']?.['ota:TravelerRefNumber']);
-
-    // 2. Normaliza os segmentos para um array
-    const segmentsNode = itinerary?.['ota:OriginDestinationOptions']?.['ota:OriginDestinationOption']?.['ota:FlightSegment'] || [];
+    const segmentsNode = itineraryFromRequest?.['ota:OriginDestinationOptions']?.['ota:OriginDestinationOption']?.['ota:FlightSegment'] || [];
     const segmentsArray = Array.isArray(segmentsNode) ? segmentsNode : [segmentsNode];
-    // ---------------------------------
 
-    const responseBody = {
-        'pricingResponse': {
-            _attributes: { xmlns: 'http://service.resadapter.myidtravel.lhsystems.com' },
-            'employeeData': employeeData,
-            'OTA_AirPriceRS': {
-                _attributes: {
-                    EchoToken: echoToken,
-                    Target: "Test",
-                    TimeStamp: new Date().toISOString(),
-                    Version: "1.1"
+    // Adiciona atributos necessários ao itinerário que será ecoado
+    segmentsArray.forEach(segment => {
+        segment._attributes.NumberInParty = "1";
+    });
+
+    // --- LÓGICA DE PRECIFICAÇÃO REFEITA PARA REPLICAR O EXEMPLO VÁLIDO ---
+    const ptcBreakdowns = travelersArray.map(traveler => {
+        const pax = traveler['ota:AirTraveler'];
+        const ptc = pax._attributes.PassengerTypeCode;
+        const rph = pax['ota:TravelerRefNumber']._attributes.RPH;
+        
+        return {
+            'ota:PassengerTypeQuantity': { _attributes: { Quantity: "1", Code: ptc } },
+            // 1. CORREÇÃO: Usa o FareBasisCode do exemplo válido.
+            'ota:FareBasisCodes': { 'ota:FareBasisCode': 'G' },
+            'ota:TravelerRefNumber': { _attributes: { RPH: rph } },
+            'ota:PassengerFare': {
+                _attributes: { NegotiatedFare: "false" },
+                // 3. CORREÇÃO: Usa os valores e a moeda (USD) do exemplo válido.
+                'ota:BaseFare': { _attributes: { Amount: "78.35", CurrencyCode: "USD", DecimalPlaces: "2" } },
+                'ota:Taxes': {
+                    _attributes: { Amount: "16.66", CurrencyCode: "USD", DecimalPlaces: "2" },
+                    'ota:Tax': [
+                        { _attributes: { TaxCode: "OB", Amount: "16.66", CurrencyCode: "USD", DecimalPlaces: "2" } },
+                    ]
                 },
-                'PricedItineraries': {
-                    'PricedItinerary': {
-                        'AirItinerary': itinerary,
-                        'AirItineraryPricingInfo': {
-                            'PTC_FareBreakdowns': {
-                                'PTC_FareBreakdown': {
-                                    'PassengerFare': {
-                                        'Taxes': {
-                                            'Tax': [
-                                                { _attributes: { Amount: "2000", CurrencyCode: "JPY", DecimalPlaces: "0", TaxCode: "SW" } },
-                                                { _attributes: { Amount: "700", CurrencyCode: "JPY", DecimalPlaces: "0", TaxCode: "DE" } },
-                                                { _attributes: { Amount: "4580", CurrencyCode: "JPY", DecimalPlaces: "0", TaxCode: "OY" } }
-                                            ]
-                                        }
-                                    },
-                                    'TravelerRefNumber': travelerRefNumbers,
-                                    'TicketDesignators': {
-                                        // Usa o array normalizado para garantir que .map() funcione
-                                        'TicketDesignator': segmentsArray.map(s => ({ _attributes: { FlightRefRPH: s._attributes.RPH } }))
-                                    }
-                                }
-                            }
+                'ota:TotalFare': { _attributes: { Amount: "95.01", CurrencyCode: "USD", DecimalPlaces: "2" } }
+                // 2. CORREÇÃO: A tag <UnstructuredFareCalc> foi REMOVIDA.
+            },
+            'ota:TicketDesignators': { 'ota:TicketDesignator': segmentsArray.map(s => ({ _attributes: { FlightRefRPH: s._attributes.RPH } }))}
+        };
+    });
+
+    // Monta o corpo da resposta final
+    const responseBody = {
+        'ns2:pricingResponse': {
+            _attributes: { 'xmlns:ns2': "http://service.resadapter.myidtravel.lhsystems.com", 'xmlns:myid': "http://bos.service.resadapter.myidtravel.lhsystems.com", 'xmlns:ota': "http://www.opentravel.org/OTA/2003/05" },
+            'myid:employeeData': employeeData,
+            'ota:OTA_AirPriceRS': {
+                _attributes: { TimeStamp: new Date().toISOString(), EchoToken: echoToken, Target: "Test", Version: "1.1" },
+                'ota:Success': {},
+                'ota:PricedItineraries': {
+                    'ota:PricedItinerary': {
+                        _attributes: { SequenceNumber: "1" },
+                        'ota:AirItinerary': itineraryFromRequest,
+                        'ota:AirItineraryPricingInfo': {
+                            'ota:ItinTotalFare': {
+                                _attributes: { NegotiatedFare: "false" },
+                                'ota:BaseFare': { _attributes: { Amount: "78.35", CurrencyCode: "USD", DecimalPlaces: "2" } },
+                                'ota:Taxes': { _attributes: { Amount: "16.66", CurrencyCode: "USD", DecimalPlaces: "2" } },
+                                'ota:TotalFare': { _attributes: { Amount: "95.01", CurrencyCode: "USD", DecimalPlaces: "2" } }
+                            },
+                            'ota:PTC_FareBreakdowns': { 'ota:PTC_FareBreakdown': ptcBreakdowns }
                         }
                     }
                 }
             }
         }
     };
-
     return responseBody;
 }
 
@@ -398,37 +468,65 @@ function pricing(soapBody) {
  * Manipula a requisição de retrieveBooking. Agora lê a reserva do DB.
  */
 function retrieveBooking(soapBody) {
-    const retrieveRequest = soapBody?.['ns2:retrieveBookingRequest'];
-    const otaRequest = retrieveRequest?.['ota:OTA_ReadRQ'];
-    
-    const pnrId = otaRequest?.['ota:ReadRequests']?.['ota:ReadRequest']?.['ota:UniqueID']?._attributes.ID;
+    // 1. Extração de dados da requisição
+    const retrieveRequest = soapBody['ns2:retrieveBookingRequest'];
+    const otaRequest = retrieveRequest['ota:OTA_ReadRQ'];
+    const pnrId = otaRequest['ota:ReadRequests']['ota:ReadRequest']['ota:UniqueID']._attributes.ID;
 
-    // 1. Busca a reserva no nosso "banco de dados" JSON
-    const savedBooking = dbService.getBooking(pnrId);
+    console.log(`Recebida consulta para o PNR: ${pnrId}`);
 
-    // 2. Verifica se a reserva foi encontrada
-    if (!savedBooking) {
-        console.warn(`Tentativa de consulta ao PNR ${pnrId}, mas ele não foi encontrado no DB.`);
-        // Retorna um erro padrão do myIDTravel (seção 17 do manual)
+    // 2. Consulta ao banco de dados mock
+    const savedData = dbService.getBooking(pnrId);
+
+    // 3. Tratamento de erro, caso o PNR não seja encontrado no banco de dados
+    if (!savedData) {
+        console.warn(`PNR ${pnrId} não encontrado no banco de dados.`);
+        // Retorna um erro padronizado conforme o manual (Seção 17, Código 96501)
         return {
-            'OTA_AirBookRS': {
-                'Errors': {
-                    'Error': { _attributes: { Code: "96501", ShortText: "PNR not found", Type: "ERR" } }
+            'ns2:retrieveBookingResponse': {
+                 _attributes: { 'xmlns:ns2': "http://service.resadapter.myidtravel.lhsystems.com" },
+                'ota:OTA_AirBookRS': {
+                    _attributes: { EchoToken: otaRequest._attributes.EchoToken, TimeStamp: new Date().toISOString() },
+                    'Errors': {
+                        'Error': { 
+                            _attributes: { 
+                                Code: "96501", 
+                                ShortText: "PNR not found", 
+                                Type: "ERR" 
+                            } 
+                        }
+                    }
                 }
             }
         };
     }
 
-    console.log(`Reserva com PNR ${pnrId} encontrada e retornada.`);
+    console.log(`Reserva com PNR ${pnrId} encontrada. Montando resposta...`);
     
-    // 3. Monta a resposta com os dados que foram salvos
+    // 4. Montagem da resposta de sucesso com a estrutura correta
     const responseBody = {
-        'retrieveBookingResponse': {
-            _attributes: { xmlns: 'http://service.resadapter.myidtravel.lhsystems.com' },
-            'employeeData': retrieveRequest?.['myid:employeeData'],
-            'OTA_AirBookRS': savedBooking
+        'ns2:retrieveBookingResponse': {
+            _attributes: { 
+                'xmlns:ns2': "http://service.resadapter.myidtravel.lhsystems.com",
+                'xmlns:myid': "http://bos.service.resadapter.myidtravel.lhsystems.com",
+                'xmlns:ota': "http://www.opentravel.org/OTA/2003/05" 
+            },
+            'myid:employeeData': savedData.employeeData,
+            'myid:bookingContactDetails': savedData.contactDetails,
+            'ota:OTA_AirBookRS': {
+                // Ecoa os atributos da requisição ATUAL, não da que foi salva
+                _attributes: {
+                    EchoToken: otaRequest._attributes.EchoToken,
+                    TimeStamp: new Date().toISOString(),
+                    Target: "Test",
+                    Version: "1.1"
+                },
+                'ota:Success': {}, // Tag de sucesso, conforme especificação da tabela E9-4
+                'ota:AirReservation': savedData.otaAirBookRS.AirReservation
+            }
         }
     };
+
     return responseBody;
 }
 
@@ -439,72 +537,59 @@ function retrieveBooking(soapBody) {
  */
 function retrieveTicket(soapBody) {
     const retrieveRequest = soapBody?.['ns2:retrieveTicketRequest'];
-    const otaRequest = retrieveRequest?.['ota:OTA_ReadRQ'];
-    const employeeData = retrieveRequest?.['myid:employeeData'];
+    const otaRequest = retrieveRequest['ota:OTA_ReadRQ'];
+    const employeeData = retrieveRequest['myid:employeeData'];
+    const informedTicket = retrieveRequest["ota:OTA_ReadRQ"]["ota:ReadRequests"]["ota:AirReadRequest"]["ota:TicketNumber"]._attributes.eTicketNumber;
+    console.log(`\n-----------------------------------------------\nInformedTicket: ${JSON.stringify(informedTicket)}\n\n\n`);
+    // Para o mock, vamos assumir que o bilhete consultado pertence à última reserva criada.
+    // Em um sistema real, faríamos uma busca pelo número do bilhete.
+    //const db = dbService.readDb();
+    // const allPnrs = Object.keys(db);
+    // const lastPnr = allPnrs[allPnrs.length - 1];
+    const savedData = dbService.getTicket(informedTicket);
+
+    if (!savedData) {
+        return { /* ... seu objeto de erro ... */ };
+    }
+
+    console.log(`Consulta de bilhete associada ao eTicket ${informedTicket}. Montando resposta...`);
     
-    // Extrai dados da requisição para ecoar na resposta
-    const echoToken = otaRequest?._attributes?.EchoToken || 'mock-token-ticket';
-    const airReadRequest = otaRequest?.['ota:ReadRequests']?.['ota:AirReadRequest'];
-    const ticketNumber = airReadRequest?.['ota:TicketNumber']?._attributes?.eTicketNumber || '0000000000000';
-    const surname = airReadRequest?.['ota:Name']?.['ota:Surname']?._text || 'Doe';
-    
+    // Clona o itinerário para poder modificar o status sem alterar o original no DB
+    const itineraryForResponse = JSON.parse(JSON.stringify(savedData.otaAirBookRS.AirReservation['ota:AirItinerary']));
+    const segmentsNode = itineraryForResponse?.['ota:OriginDestinationOptions']?.['ota:OriginDestinationOption']?.['ota:FlightSegment'] || [];
+    const segmentsArray = Array.isArray(segmentsNode) ? segmentsNode : [segmentsNode];
+    segmentsArray.forEach(segment => {
+        // CORREÇÃO 3: Define o status do cupom como "101" (Aberto/Não utilizado)
+        segment._attributes.Status = "101";
+    });
+
     const responseBody = {
-        'retrieveTicketResponse': {
-            _attributes: { xmlns: 'http://service.resadapter.myidtravel.lhsystems.com' },
-            'employeeData': employeeData,
-            // Elementos específicos da resposta de retrieveTicket 
-            'tourCodeBox': {
+        // CORREÇÃO 1: Adiciona o prefixo ns2: ao wrapper
+        'ns2:retrieveTicketResponse': {
+            _attributes: { 'xmlns:ns2': "http://service.resadapter.myidtravel.lhsystems.com", 'xmlns:myid': "http://bos.service.resadapter.myidtravel.lhsystems.com", 'xmlns:ota': "http://www.opentravel.org/OTA/2003/05" },
+            'myid:employeeData': savedData.employeeData,
+            'myid:tourCodeBox': { _attributes: { tourCode: "MOCK/IDTRAVEL/CODE" } },
+            'myid:dateOfIssue': { _text: new Date().toISOString().split('T')[0] },
+            'ota:OTA_AirBookRS': {
                 _attributes: {
-                    xmlns: 'http://bos.service.resadapter.myidtravel.lhsystems.com',
-                    tourCode: `${generatePnr}/IDTRAVEL/CODE`
-                }
-            },
-            'dateOfIssue': {
-                _attributes: {
-                    xmlns: 'http://bos.service.resadapter.myidtravel.lhsystems.com'
+                    EchoToken: otaRequest._attributes.EchoToken,
+                    TimeStamp: new Date().toISOString(),
+                    Target: "Test",
+                    Version: "1.1"
                 },
-                // A data de hoje como data de emissão mockada
-                _text: new Date().toISOString().split('T')[0]
-            },
-            'OTA_AirBookRS': {
-                _attributes: { EchoToken: echoToken, TimeStamp: new Date().toISOString(), Target: 'Test', Version: '1.1' },
-                'AirReservation': {
-                    'AirItinerary': {
-                        'OriginDestinationOptions': {
-                            'OriginDestinationOption': {
-                                // Usa o status '101' (open) conforme especificado no manual 
-                                'FlightSegment': { _attributes: { DepartureDateTime: "2025-12-25T10:00:00", RPH: "1", ResBookDesigCode: "Y", Status: "101" }, 'DepartureAirport': { _attributes: { LocationCode: 'VVI' } }, 'ArrivalAirport': { _attributes: { LocationCode: 'SCL' } }, 'OperatingAirline': { _attributes: { Code: '8J', FlightNumber: '300' } } }
-                            }
-                        }
-                    },
-                    'PriceInfo': {
-                        'PTC_FareBreakdowns': {
-                            'PTC_FareBreakdown': {
-                                // Inclui o TicketDesignators conforme especificado no manual [cite: 3215]
-                                'TicketDesignators': {
-                                    'TicketDesignator': { _attributes: { FlightRefRPH: "1" } }
-                                }
-                            }
-                        }
-                    },
-                    'TravelerInfo': {
-                        'AirTraveler': {
-                            _attributes: { Gender: 'Male', PassengerTypeCode: 'ADT' },
-                            'PersonName': { 'GivenName': 'Jon', 'Surname': surname },
-                            'TravelerRefNumber': { _attributes: { RPH: "1" } }
-                        }
-                    },
-                    'Ticketing': {
-                        _attributes: { TicketType: 'eTicket', TicketingStatus: '3', TravelerRefNumber: '1' },
-                        // Ecoa o número do bilhete da requisição
-                        'TicketAdvisory': ticketNumber
-                    },
-                    // Um PNR mockado associado ao bilhete
-                    'BookingReferenceID': { _attributes: { ID: generatePnr(), Type: "14" } }
+                'ota:Success': {},
+                'ota:AirReservation': {
+                    'ota:AirItinerary': itineraryForResponse,
+                    // CORREÇÃO 2: Inclui o bloco de preço completo lido do DB
+                    'ota:PriceInfo': savedData.otaAirBookRS.AirReservation['ota:PriceInfo'],
+                    'ota:TravelerInfo': savedData.otaAirBookRS.AirReservation['ota:TravelerInfo'],
+                    'ota:Ticketing': savedData.otaAirBookRS.AirReservation['ota:Ticketing'],
+                    'ota:BookingReferenceID': savedData.otaAirBookRS.AirReservation['ota:BookingReferenceID']
                 }
             }
         }
     };
+
     return responseBody;
 }
 
@@ -897,6 +982,65 @@ function confirmRefund(soapBody) {
     return responseBody;
 }
 
+/**
+ * Manipula a requisição para modificar uma reserva existente.
+ * Lê a reserva do DB, aplica as alterações e salva o novo estado.
+ * Baseado na seção 12 do manual.
+ */
+function modifyBooking(soapBody) {
+    const modifyRequest = soapBody['ns2:modifyBookingRequest'];
+    const otaRequest = modifyRequest['ota:OTA_AirBookModifyRQ'];
+    const employeeData = modifyRequest['myid:employeeData'];
+    // Captura os detalhes de contato da requisição para ecoar na resposta
+    const contactDetails = modifyRequest['myid:bookingContactDetails'];
+
+    const pnrId = otaRequest['ota:AirReservation']['ota:BookingReferenceID']._attributes.ID;
+    const modificationDetails = otaRequest['ota:AirBookModifyRQ'];
+    const modificationType = modificationDetails._attributes.ModificationType;
+
+    console.log(`Recebida modificação (Tipo: ${modificationType}) para o PNR: ${pnrId}`);
+
+    const existingBooking = dbService.getBooking(pnrId);
+
+    if (!existingBooking) {
+        console.warn(`Tentativa de modificar PNR ${pnrId}, mas ele não foi encontrado.`);
+        return { /* ... seu objeto de erro PNR não encontrado ... */ };
+    }
+
+    // Aplica a lógica de modificação
+    if (modificationType === '30') { // Rebook all
+        console.log(`Aplicando rebook do itinerário para o PNR ${pnrId}`);
+        // Substitui o itinerário antigo pelo novo que veio na requisição
+        existingBooking.otaAirBookRS.AirReservation['ota:AirItinerary'] = modificationDetails['ota:AirItinerary'];
+    }
+
+    // Salva a reserva atualizada
+    dbService.saveBooking(pnrId, existingBooking);
+    console.log(`PNR ${pnrId} modificado e salvo com sucesso.`);
+
+    // --- MONTAGEM DA RESPOSTA CORRIGIDA ---
+    const responseBody = {
+        'ns2:modifyBookingResponse': {
+            _attributes: { 'xmlns:ns2': "http://service.resadapter.myidtravel.lhsystems.com", 'xmlns:myid': "http://bos.service.resadapter.myidtravel.lhsystems.com", 'xmlns:ota': "http://www.opentravel.org/OTA/2003/05" },
+            'myid:employeeData': employeeData,
+            // 1. ADIÇÃO DO bookingContactDetails
+            'myid:bookingContactDetails': contactDetails, 
+            'ota:OTA_AirBookRS': {
+                _attributes: {
+                    EchoToken: otaRequest._attributes.EchoToken,
+                    TimeStamp: new Date().toISOString(),
+                    Target: "Test",
+                    Version: "1.1"
+                },
+                // 2. REMOÇÃO do <Success/> para alinhar com o fluxo de booking
+                'ota:AirReservation': existingBooking.otaAirBookRS.AirReservation
+            }
+        }
+    };
+
+    return responseBody;
+}
+
 module.exports = {
     cancelBooking,
     cancelSegmentSell,
@@ -911,5 +1055,6 @@ module.exports = {
     booking,
     initRefund,
     updateRefund,
-    confirmRefund
+    confirmRefund,
+    modifyBooking,
 };

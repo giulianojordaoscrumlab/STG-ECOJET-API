@@ -1,6 +1,6 @@
 // --- Base de dados mockada para os voos da Ecojet na Bolívia ---
 // Santa Cruz foi atualizado para VVI, que é o código IATA mais comum para voos comerciais.
-export const MOCK_FLIGHT_SCHEDULE = [
+const MOCK_FLIGHT_SCHEDULE = [
     { origin: "CBB", destination: "LPB", flightNumber: "110", durationMinutes: 50, equipment: "CRJ" },
     { origin: "LPB", destination: "CBB", flightNumber: "111", durationMinutes: 50, equipment: "CRJ" },
     { origin: "CBB", destination: "VVI", flightNumber: "220", durationMinutes: 55, equipment: "320" },
@@ -20,3 +20,7 @@ export const MOCK_FLIGHT_SCHEDULE = [
     { origin: "TDD", destination: "GYA", flightNumber: "990", durationMinutes: 50, equipment: "AT4" },
     { origin: "GYA", destination: "TDD", flightNumber: "991", durationMinutes: 50, equipment: "AT4" },
 ];
+
+module.exports = {
+    MOCK_FLIGHT_SCHEDULE
+};

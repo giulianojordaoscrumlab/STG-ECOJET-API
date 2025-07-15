@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const soapHandler = require('./middlewares/soapHandler');
 const apiRoutes = require('./routes/api');
+const path = require('path');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -19,6 +20,9 @@ app.use(soapHandler);
 // 4. Usar as rotas da API
 // Todas as requisições SOAP serão direcionadas para '/ws'
 app.use('/', apiRoutes);
+
+// 5. Rota estática para imagens
+app.use('/images', express.static(path.join(process.cwd(), 'images')));
 
 // Rota raiz para verificação
 app.get('/', (req, res) => {

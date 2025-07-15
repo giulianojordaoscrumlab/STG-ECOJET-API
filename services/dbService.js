@@ -48,8 +48,91 @@ const deleteBooking = (pnr) => {
     return false; // Não encontrou
 };
 
+// Pega uma reserva pelo Ticket
+const getTicket = (ticketNumber) => {
+    const db = readDb();
+    // Itera sobre todas as chaves (PNRs) do banco de dados
+    for (const pnr in db) {
+        // Acessa o array de bilhetes de forma segura com optional chaining (?.)
+        const ticketingBlocks = db[pnr]?.otaAirBookRS?.AirReservation?.['ota:Ticketing'];
+        if (ticketingBlocks && Array.isArray(ticketingBlocks)) {
+            // Procura dentro do array de bilhetes
+            const foundTicket = ticketingBlocks.find(
+                ticket => ticket['ota:TicketAdvisory']._text === ticketNumber
+                
+            );
+            if (foundTicket) {
+                // Se encontrar, retorna o objeto completo da reserva associada
+                return db[pnr]; 
+            }
+        }
+    }
+    // Se o loop terminar e não encontrar nada, retorna undefined
+    return undefined; 
+};
+
+// Deleta uma reserva pelo Ticket
+const deleteTicket = (ticketNumber) => {
+    const db = readDb();
+    let pnrToDelete = null;
+
+    // Primeiro, encontra o PNR associado ao número do bilhete
+    for (const pnr in db) {
+        const ticketingBlocks = db[pnr]?.AirReservation?.['ota:Ticketing'];
+        if (ticketingBlocks && Array.isArray(ticketingBlocks)) {
+            const found = ticketingBlocks.some(
+                ticket => ticket['ota:TicketAdvisory']?._text === ticketNumber
+            );
+            if (found) {
+                pnrToDelete = pnr;
+                break; // Encontrou o PNR, pode parar de procurar
+            }
+        }
+    }
+
+    // Se encontrou um PNR para deletar, usa a função deleteBooking que já funciona
+    if (pnrToDelete) {
+        return deleteBooking(pnrToDelete);
+    }
+    
+    return false; // Não encontrou o bilhete para deletar
+};
+
+const saveTicket = (pnr, ticketData) => {
+    const db = readDb();
+    const bookingRecord = db[pnr];
+
+    // 1. Verifica se a reserva existe
+    if (!bookingRecord) {
+        console.error(`Erro ao salvar bilhete: PNR ${pnr} não encontrado.`);
+        return false;
+    }
+
+    // Garante que o container ota:AirReservation exista
+    if (!bookingRecord.otaAirBookRS?.AirReservation) {
+         console.error(`Erro ao salvar bilhete: Estrutura da reserva para o PNR ${pnr} é inválida.`);
+        return false;
+    }
+
+    // 2. Garante que o array de bilhetes exista
+    if (!bookingRecord.otaAirBookRS.AirReservation['ota:Ticketing']) {
+        bookingRecord.otaAirBookRS.AirReservation['ota:Ticketing'] = [];
+    }
+
+    // 3. Adiciona o novo bilhete ao array
+    bookingRecord.otaAirBookRS.AirReservation['ota:Ticketing'].push(ticketData);
+
+    // 4. Salva a reserva modificada de volta no DB
+    writeDb(db);
+    console.log(`Bilhete adicionado com sucesso ao PNR ${pnr}.`);
+    return true;
+};
+
 module.exports = {
     saveBooking,
     getBooking,
     deleteBooking,
+    getTicket,
+    deleteTicket,
+    saveTicket,
 };

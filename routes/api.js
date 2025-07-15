@@ -5,6 +5,8 @@ const { createSoapResponse } = require('../services/soapService');
 const path = require('path');
 const fs = require('fs');
 
+let host;
+let environment;
 
 // Todas as requisições SOAP chegarão a este endpoint POST
 router.post('/', (req, res) => {
@@ -94,6 +96,16 @@ router.post('/', (req, res) => {
         responseJson = resAdapterController.cancelBooking(soapBody);
         break;
 
+    case 'ns2:confirmRefundTicketRequest':
+    case 'confirmRefundTicketRequest':
+        responseJson = resAdapterController.confirmRefund(soapBody);
+        break;
+
+    case 'ns2:modifyBookingRequest':
+    case 'modifyBookingRequest':
+        responseJson = resAdapterController.modifyBooking(soapBody);
+        break;
+
     default:
       console.warn(`[ALERTA] Ação SOAP não tratada recebida: ${action}`);
       console.warn('Corpo da requisição:', JSON.stringify(soapBody, null, 2));
@@ -114,6 +126,18 @@ router.post('/', (req, res) => {
 
 // Rota GET para WSDL
 router.get('/', (req, res) => {
+    host = req.headers.host;
+
+    environment = (host.includes('prd.') || host.includes('prod.')) 
+        ? "Production Server"
+        :  (host.includes('stg.') || host.includes('stage.')) 
+            ? "Stage Server"
+            : (host.includes('hml.') || host.includes('homol.')) 
+                ? "Homologation Server"
+                : (host.includes('tst.') || host.includes('test.')) 
+                    ? "Test Server"
+                    : "Local Server";
+
     // Verifica se a query string '?wsdl' está presente
     if (req.query.hasOwnProperty('wsdl')) {
       const wsdlPath = path.join(__dirname, '..', 'schemas', 'RESAdapterService.wsdl');
@@ -128,9 +152,87 @@ router.get('/', (req, res) => {
         }
       });
     } else {
-      res.status(200).send('Este é o endpoint SOAP. Use o método POST para requisições.');
+      res.status(200).send(defaultPage(environment));
     }
 });
 
+
+const defaultPage = (env) => `
+    <!doctype html>
+      <html>
+      <head>
+          <meta charset="utf-8">
+          <title>Linea Aérea Ecojet API</title>
+          <style>
+              html, body {
+                  margin: 0;
+                  padding: 0;
+                  height: 100%;
+                  background-color: #0693e3;
+                  display: flex;
+                  flex-direction: column;
+                  font-family: "Sans";
+              }
+
+              .container {
+                  flex: 1;
+                  display: flex;
+                  justify-content: center;
+                  align-items: center;
+              }
+
+              .footer {
+                  position: fixed;
+                  bottom: 20px;
+                  width: 100%;
+                  text-align: center;
+                  font-size: 12px;
+                  color: #fff;
+                  font-family: "Sans";
+              }
+
+              .footer .btlink {
+                  color: #FFFFFF;
+                  background-color: #FF8800;
+                  text-decoration: none;
+                  padding: 2px 4px;
+                  border-radius: 10px;
+              }
+              
+              .H1 {
+                font-family: Roboto;
+                color: #fff;
+                font-size: 12pt;
+                width: 100%;
+                text-align: center;
+                heigth: 25px;
+                position: absolute;
+                bottom: 50px;
+              }
+              .H2 {
+                font-family: Roboto;
+                color: #fff;
+                font-size: 12pt;
+                width: 100%;
+                text-align: center;
+                heigth: 25px;
+                position: absolute;
+                bottom: 150px;
+              }
+          </style>
+      </head>
+      <body>
+          <div class="container">
+              <img src="images/ecoblanco.png" alt="Logo" />
+          </div>
+          <div class="H1">CoreApi Linea Aérea Ecojet</div>
+          <div class="H2">${env}</div>
+          <div class="footer">
+              Powered by
+              <a class="btlink" href="https://scrumlab.com.br" target="_blank">ScrumLab</a>
+          </div>
+      </body>
+      </html>`
+;
 
 module.exports = router;
