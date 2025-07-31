@@ -797,7 +797,7 @@
       }
     }
   },
-  "XNDWXN": {
+  "LQHBAN": {
     "employeeData": {
       "_attributes": {
         "xmlns:myid": "http://bos.service.resadapter.myidtravel.lhsystems.com"
@@ -838,7 +838,7 @@
     "otaAirBookRS": {
       "_attributes": {
         "EchoToken": "1310",
-        "TimeStamp": "2025-07-15T21:02:16.516Z",
+        "TimeStamp": "2025-07-22T20:51:35.494Z",
         "Target": "Test",
         "Version": "1.1"
       },
@@ -1050,14 +1050,119 @@
               "TravelerRefNumber": "1"
             },
             "ota:TicketAdvisory": {
-              "_text": "874-9521291765"
+              "_text": "874-6304323769"
             }
           }
         ],
         "ota:BookingReferenceID": {
           "_attributes": {
-            "ID": "XNDWXN",
+            "ID": "LQHBAN",
             "Type": "14"
+          }
+        }
+      }
+    }
+  },
+  "GXOCYD": {
+    "employeeData": {
+      "_attributes": {
+        "xmlns:myid": "http://bos.service.resadapter.myidtravel.lhsystems.com"
+      },
+      "myid:employeeId": {
+        "_text": "U01"
+      },
+      "myid:employingAirline": {
+        "_text": "8J"
+      },
+      "myid:dateOfEmployment": {
+        "_text": "2004-01-01"
+      },
+      "myid:passengerID": {
+        "_text": "7346498"
+      },
+      "myid:travellerId": {
+        "_text": "1"
+      },
+      "myid:bookingMode": {
+        "_text": "LEISURE"
+      }
+    },
+    "otaAirBookRS": {
+      "AirReservation": {
+        "ota:AirItinerary": {
+          "ota:OriginDestinationOptions": {
+            "ota:OriginDestinationOption": {
+              "ota:FlightSegment": {
+                "_attributes": {
+                  "ArrivalDateTime": "2025-07-16T20:20:00.000",
+                  "DepartureDateTime": "2025-07-16T19:30:00.000",
+                  "RPH": "1",
+                  "ResBookDesigCode": "X",
+                  "Status": "26",
+                  "Ticket": "eTicket",
+                  "NumberInParty": "1"
+                },
+                "ota:DepartureAirport": {
+                  "_attributes": {
+                    "CodeContext": "IATA",
+                    "LocationCode": "VVI"
+                  }
+                },
+                "ota:ArrivalAirport": {
+                  "_attributes": {
+                    "CodeContext": "IATA",
+                    "LocationCode": "CBB"
+                  }
+                },
+                "ota:OperatingAirline": {
+                  "_attributes": {
+                    "Code": "8J",
+                    "FlightNumber": "263",
+                    "CompanyShortName": "8J"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "ota:TravelerInfo": {
+          "ota:AirTraveler": {
+            "_attributes": {
+              "AccompaniedByInfant": "false",
+              "Gender": "Male",
+              "PassengerTypeCode": "ADT"
+            },
+            "ota:ProfileRef": {
+              "ota:UniqueID": {
+                "_attributes": {
+                  "ID": "1",
+                  "Type": "ZEA"
+                }
+              }
+            },
+            "ota:PersonName": {
+              "ota:NamePrefix": {
+                "_text": "MR"
+              },
+              "ota:GivenName": {
+                "_text": "Jon"
+              },
+              "ota:Surname": {
+                "_text": "Doe"
+              }
+            },
+            "ota:TravelerRefNumber": {
+              "_attributes": {
+                "RPH": "1"
+              }
+            }
+          }
+        },
+        "ota:BookingReferenceID": {
+          "_attributes": {
+            "Type": "SS",
+            "ID": "GXOCYD",
+            "ID_Context": "Segment Sell"
           }
         }
       }

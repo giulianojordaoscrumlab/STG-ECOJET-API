@@ -1,0 +1,259 @@
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:ns="http://service.resadapter.myidtravel.lhsystems.com"
+    xmlns:ns2="http://apiecojet.scrumlab.com.br"
+    xmlns:ota="http://www.opentravel.org/OTA/2003/05"
+    targetNamespace="http://service.resadapter.myidtravel.lhsystems.com"
+    elementFormDefault="qualified" xmlns="http://service.resadapter.myidtravel.lhsystems.com">
+
+    <!-- Import the necessary external schemas -->
+    <xs:import namespace="http://www.opentravel.org/OTA/2003/05" schemaLocation="OTA_AirAvailRQ.xsd"/>
+    <xs:import namespace="http://www.opentravel.org/OTA/2003/05" schemaLocation="OTA_AirAvailRS.xsd"/>
+    <xs:import namespace="http://www.opentravel.org/OTA/2003/05" schemaLocation="OTA_AirPriceRQ.xsd"/>
+    <xs:import namespace="http://www.opentravel.org/OTA/2003/05" schemaLocation="OTA_AirPriceRS.xsd"/>
+    <xs:import namespace="http://www.opentravel.org/OTA/2003/05" schemaLocation="OTA_AirBookRQ.xsd"/>
+    <xs:import namespace="http://www.opentravel.org/OTA/2003/05" schemaLocation="OTA_AirBookRS.xsd"/>
+    <xs:import namespace="http://www.opentravel.org/OTA/2003/05"
+        schemaLocation="OTA_AirDemandTicketRQ.xsd"/>
+    <xs:import namespace="http://www.opentravel.org/OTA/2003/05"
+        schemaLocation="OTA_AirDemandTicketRS.xsd"/>
+    <xs:import namespace="http://www.opentravel.org/OTA/2003/05" schemaLocation="OTA_ReadRQ.xsd"/>
+    <xs:import namespace="http://www.opentravel.org/OTA/2003/05"
+        schemaLocation="OTA_AirBookModifyRQ.xsd"/>
+    <xs:import namespace="http://www.opentravel.org/OTA/2003/05" schemaLocation="OTA_CancelRQ.xsd"/>
+    <xs:import namespace="http://www.opentravel.org/OTA/2003/05" schemaLocation="OTA_CancelRS.xsd"/>
+    <xs:include schemaLocation="OTA_AirCommonTypes.xsd"/>
+
+    <xs:complexType name="MyIdTravelEmployeeData">
+        <xs:sequence>
+            <xs:element name="employeeId" type="xs:string"/>
+            <xs:element name="employingAirline" type="xs:string"/>
+            <xs:element name="dateOfEmployment" type="xs:date"/>
+            <xs:element name="passengerID" type="ota:RPH_Type"/>
+            <xs:element name="travellerId" type="xs:string"/>
+            <xs:element name="bookingMode" type="xs:string" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="MyIdTravelZEDFareBase">
+        <xs:attribute name="fareBaseCode" type="xs:string" use="required"/>
+        <xs:attribute name="passengerID" type="ota:RPH_Type" use="required"/>
+        <xs:attribute name="segmentID" type="ota:RPH_Type" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="MyIdTravelTourCodeBox">
+        <xs:attribute name="tourCode" type="xs:string" use="required"/>
+        <xs:attribute name="passengerID" type="ota:RPH_Type" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="MyIdTravelBookingContactDetails">
+        <xs:sequence>
+            <xs:element name="emailAddress" type="xs:string"/>
+            <xs:element name="officeNumber" type="xs:string"/>
+            <xs:element name="privateNumber" type="xs:string"/>
+            <xs:element name="leaveNumber" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:element name="availabilityRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="employeeData" type="ns:MyIdTravelEmployeeData"/>
+                <xs:element ref="ota:OTA_AirAvailRQ"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="availabilityResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="employeeData" type="ns:MyIdTravelEmployeeData"/>
+                <xs:element ref="ota:OTA_AirAvailRS"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="pricingRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="employeeData" type="ns:MyIdTravelEmployeeData"/>
+                <xs:element name="ZEDFareBase" type="ns:MyIdTravelZEDFareBase" minOccurs="0"
+                    maxOccurs="unbounded"/>
+                <xs:element name="tourCodeBox" type="ns:MyIdTravelTourCodeBox" minOccurs="0"
+                    maxOccurs="unbounded"/>
+                <xs:element name="BookingReferenceID" type="ota:UniqueID_Type" minOccurs="0"/>
+                <xs:element ref="ota:OTA_AirPriceRQ"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="pricingResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="employeeData" type="ns:MyIdTravelEmployeeData"/>
+                <xs:element ref="ota:OTA_AirPriceRS"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="segmentSellRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="employeeData" type="MyIdTravelEmployeeData"/>
+                <xs:element ref="ota:OTA_AirBookRQ"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="segmentSellResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="employeeData" type="MyIdTravelEmployeeData"/>
+                <xs:element ref="ota:OTA_AirBookRS"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="cancelSegmentSellRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="ota:OTA_CancelRQ"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="cancelSegmentSellResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="ota:OTA_CancelRS"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="bookingRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="employeeData" type="ns:MyIdTravelEmployeeData"/>
+                <xs:element name="bookingContactDetails" type="ns:MyIdTravelBookingContactDetails"/>
+                <xs:element name="ZEDFareBase" type="ns:MyIdTravelZEDFareBase" minOccurs="0"
+                    maxOccurs="unbounded"/>
+                <xs:element name="tourCodeBox" type="ns:MyIdTravelTourCodeBox" minOccurs="0"
+                    maxOccurs="unbounded"/>
+                <xs:element ref="ota:OTA_AirBookRQ"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="bookingResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="employeeData" type=" ns:MyIdTravelEmployeeData"/>
+                <xs:element ref="ota:OTA_AirBookRS"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="createTicketRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="employeeData" type="ns:MyIdTravelEmployeeData"/>
+                <xs:element ref="ota:OTA_AirDemandTicketRQ"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="createTicketResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="employeeData" type="ns:MyIdTravelEmployeeData"/>
+                <xs:element ref="ota:OTA_AirDemandTicketRS"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="retrieveBookingRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="employeeData" type="ns:MyIdTravelEmployeeData"/>
+                <xs:element ref="ota:OTA_ReadRQ"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="retrieveBookingResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="employeeData" type="ns:MyIdTravelEmployeeData"/>
+                <xs:element name="bookingContactDetails" type="ns:MyIdTravelBookingContactDetails"/>
+                <xs:element ref="ota:OTA_AirBookRS"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="retrieveTicketRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="employeeData" type="ns:MyIdTravelEmployeeData"/>
+                <xs:element ref="ota:OTA_ReadRQ"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="retrieveTicketResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="employeeData" type="ns:MyIdTravelEmployeeData"/>
+                <xs:element name="tourCodeBox" type="ns:MyIdTravelTourCodeBox" minOccurs="0"
+                    maxOccurs="unbounded"/>
+                <xs:element name="dateOfIssue" type="xs:date"/>
+                <xs:element ref="ota:OTA_AirBookRS"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+
+    <xs:element name="modifyBookingRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="employeeData" type="ns:MyIdTravelEmployeeData"/>
+                <xs:element ref="ota:OTA_AirBookModifyRQ"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="modifyBookingResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="employeeData" type="ns:MyIdTravelEmployeeData"/>
+                <xs:element ref="ota:OTA_AirBookRS"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+
+    <xs:element name="cancelBookingRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="employeeData" type="ns:MyIdTravelEmployeeData"/>
+                <xs:element ref="ota:OTA_CancelRQ"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="cancelBookingResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="employeeData" type="ns:MyIdTravelEmployeeData"/>
+                <xs:element ref="ota:OTA_CancelRS"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="pingRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="token" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="pingResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="token" type="xs:string"/>
+                <xs:element name="time" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>

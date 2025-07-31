@@ -26,10 +26,10 @@ app.use('/images', express.static(path.join(process.cwd(), 'images')));
 
 // Rota raiz para verificação
 app.get('/', (req, res) => {
-  res.send('Ecojet_STG_API is running. Send SOAP requests to /ws');
+  res.send('Ecojet_STG_API is running. Send SOAP requests to /');
 });
 
 app.listen(PORT, () => {
   console.log(`Ecojet_STG_API listening on port ${PORT}`);
-  console.log(`WSDL should be available at http://localhost:${PORT}/ws?wsdl`);
+  console.log(`WSDL should be available at https://apiecojet.online/?wsdl`);
 });

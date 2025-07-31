@@ -70,7 +70,7 @@ function getAvailability(soapBody) {
                         'ota:DepartureAirport': { _attributes: { LocationCode: flight.origin, CodeContext: "IATA" } },
                         'ota:ArrivalAirport': { _attributes: { LocationCode: flight.destination, CodeContext: "IATA" } },
                         // CORREÇÃO: OperatingAirline com todos os atributos necessários
-                        'ota:OperatingAirline': { _attributes: { CompanyShortName: 'ES', FlightNumber: flight.flightNumber } },
+                        'ota:OperatingAirline': { _attributes: { CompanyShortName: '8J', FlightNumber: flight.flightNumber } },
                         'ota:Equipment': { _attributes: { AirEquipType: flight.equipment } },
                         'ota:BookingClassAvail': [
                             { _attributes: { ResBookDesigCode: "K", ResBookDesigQuantity: "9" } },
@@ -132,8 +132,8 @@ function getAvailabilityDetails(fullSoapRequest) {
                 _attributes: { Version: '1.1', TimeStamp: new Date().toISOString(), EchoToken: echoToken, Target: 'Test', },
                 'ns1:Success': {},
                 'ns1:FlightSegment': [
-                    { _attributes: { DepartureDateTime: `${departureDate}T09:00:00`, ArrivalDateTime: `${departureDate}T11:30:00`, FlightNumber: 'ES-101', JourneyDuration: 'PT2H30M', StopQuantity: '0', Ticket: 'eTicket' }, 'ns1:DepartureAirport': { _attributes: { LocationCode: originLocation, CodeContext: 'IATA' } }, 'ns1:ArrivalAirport': { _attributes: { LocationCode: destinationLocation, CodeContext: 'IATA' } }, 'ns1:OperatingAirline': { _attributes: { CompanyShortName: 'ES' } }, 'ns1:Equipment': { _attributes: { AirEquipType: '320' } }, 'ns1:BookingClassAvail': [ { _attributes: { ResBookDesigCode: 'G', ResBookDesigQuantity: '9' } }, { _attributes: { ResBookDesigCode: 'B', ResBookDesigQuantity: '9' }}, { _attributes: { ResBookDesigCode: 'H', ResBookDesigQuantity: '9' }}, { _attributes: { ResBookDesigCode: 'O', ResBookDesigQuantity: '9' }}, { _attributes: { ResBookDesigCode: 'S', ResBookDesigQuantity: '9' }}, { _attributes: { ResBookDesigCode: 'K', ResBookDesigQuantity: '9' }} ] },
-                    { _attributes: { DepartureDateTime: `${departureDate}T15:00:00`, ArrivalDateTime: `${departureDate}T17:30:00`, FlightNumber: 'ES-105', JourneyDuration: 'PT2H30M', StopQuantity: '0', Ticket: 'eTicket' }, 'ns1:DepartureAirport': { _attributes: { LocationCode: originLocation, CodeContext: 'IATA' } }, 'ns1:ArrivalAirport': { _attributes: { LocationCode: destinationLocation, CodeContext: 'IATA' } }, 'ns1:OperatingAirline': { _attributes: { CompanyShortName: 'ES' } }, 'ns1:Equipment': { _attributes: { AirEquipType: '32N' } }, 'ns1:BookingClassAvail': [ { _attributes: { ResBookDesigCode: 'G', ResBookDesigQuantity: '9' } }, { _attributes: { ResBookDesigCode: 'B', ResBookDesigQuantity: '9' }}, { _attributes: { ResBookDesigCode: 'H', ResBookDesigQuantity: '9' }}, { _attributes: { ResBookDesigCode: 'O', ResBookDesigQuantity: '9' }}, { _attributes: { ResBookDesigCode: 'S', ResBookDesigQuantity: '9' }}, { _attributes: { ResBookDesigCode: 'K', ResBookDesigQuantity: '9' }} ] }
+                    { _attributes: { DepartureDateTime: `${departureDate}T09:00:00`, ArrivalDateTime: `${departureDate}T11:30:00`, FlightNumber: '8J-101', JourneyDuration: 'PT2H30M', StopQuantity: '0', Ticket: 'eTicket' }, 'ns1:DepartureAirport': { _attributes: { LocationCode: originLocation, CodeContext: 'IATA' } }, 'ns1:ArrivalAirport': { _attributes: { LocationCode: destinationLocation, CodeContext: 'IATA' } }, 'ns1:OperatingAirline': { _attributes: { CompanyShortName: '8J' } }, 'ns1:Equipment': { _attributes: { AirEquipType: '320' } }, 'ns1:BookingClassAvail': [ { _attributes: { ResBookDesigCode: 'G', ResBookDesigQuantity: '9' } }, { _attributes: { ResBookDesigCode: 'B', ResBookDesigQuantity: '9' }}, { _attributes: { ResBookDesigCode: 'H', ResBookDesigQuantity: '9' }}, { _attributes: { ResBookDesigCode: 'O', ResBookDesigQuantity: '9' }}, { _attributes: { ResBookDesigCode: 'S', ResBookDesigQuantity: '9' }}, { _attributes: { ResBookDesigCode: 'K', ResBookDesigQuantity: '9' }} ] },
+                    { _attributes: { DepartureDateTime: `${departureDate}T15:00:00`, ArrivalDateTime: `${departureDate}T17:30:00`, FlightNumber: '8J-105', JourneyDuration: 'PT2H30M', StopQuantity: '0', Ticket: 'eTicket' }, 'ns1:DepartureAirport': { _attributes: { LocationCode: originLocation, CodeContext: 'IATA' } }, 'ns1:ArrivalAirport': { _attributes: { LocationCode: destinationLocation, CodeContext: 'IATA' } }, 'ns1:OperatingAirline': { _attributes: { CompanyShortName: '8J' } }, 'ns1:Equipment': { _attributes: { AirEquipType: '32N' } }, 'ns1:BookingClassAvail': [ { _attributes: { ResBookDesigCode: 'G', ResBookDesigQuantity: '9' } }, { _attributes: { ResBookDesigCode: 'B', ResBookDesigQuantity: '9' }}, { _attributes: { ResBookDesigCode: 'H', ResBookDesigQuantity: '9' }}, { _attributes: { ResBookDesigCode: 'O', ResBookDesigQuantity: '9' }}, { _attributes: { ResBookDesigCode: 'S', ResBookDesigQuantity: '9' }}, { _attributes: { ResBookDesigCode: 'K', ResBookDesigQuantity: '9' }} ] }
                 ]
             }
         }
@@ -349,56 +349,106 @@ function booking(soapBody) {
  * Manipula a requisição de pricing.
  * Adiciona os prefixos 'ota:' que faltavam em toda a estrutura da resposta.
  */
+/*
 function pricing(soapBody) {
     const pricingRequest = soapBody['ns2:pricingRequest'];
     const otaRequest = pricingRequest['ota:OTA_AirPriceRQ'];
     const employeeData = pricingRequest['myid:employeeData'];
     
-    // Extração de dados dinâmicos da requisição
     const echoToken = otaRequest?._attributes?.EchoToken;
     const itineraryFromRequest = otaRequest['ota:AirItinerary'];
+    
+    const zedFareBaseNode = pricingRequest['myid:ZEDFareBase'];
+    const zedFareBaseArray = Array.isArray(zedFareBaseNode) ? zedFareBaseNode : [zedFareBaseNode];
+    
     const travelersNode = otaRequest?.['ota:TravelerInfoSummary']?.['ota:AirTravelerAvail'] || [];
     const travelersArray = Array.isArray(travelersNode) ? travelersNode : [travelersNode];
+    
     const segmentsNode = itineraryFromRequest?.['ota:OriginDestinationOptions']?.['ota:OriginDestinationOption']?.['ota:FlightSegment'] || [];
     const segmentsArray = Array.isArray(segmentsNode) ? segmentsNode : [segmentsNode];
 
-    // Adiciona atributos necessários ao itinerário que será ecoado
+    const totalPassengers = travelersArray.length;
     segmentsArray.forEach(segment => {
-        segment._attributes.NumberInParty = "1";
+        segment._attributes.NumberInParty = totalPassengers.toString();
     });
 
-    // --- LÓGICA DE PRECIFICAÇÃO REFEITA PARA REPLICAR O EXEMPLO VÁLIDO ---
-    const ptcBreakdowns = travelersArray.map(traveler => {
+    const groupedTravelers = travelersArray.reduce((acc, traveler) => {
         const pax = traveler['ota:AirTraveler'];
         const ptc = pax._attributes.PassengerTypeCode;
-        const rph = pax['ota:TravelerRefNumber']._attributes.RPH;
+        if (!acc[ptc]) { acc[ptc] = []; }
+        acc[ptc].push(pax);
+        return acc;
+    }, {});
+    
+    let overallTotalFare = 0, overallTotalBaseFare = 0, overallTotalTaxes = 0;
+
+    const ptcBreakdowns = Object.keys(groupedTravelers).map(ptc => {
+        const travelersInGroup = groupedTravelers[ptc];
+        const quantity = travelersInGroup.length;
+        const zedType = travelersInGroup[0]['ota:ProfileRef']['ota:UniqueID']._attributes.Type;
+
+        const fareBasisCodesForGroup = travelersInGroup.map(pax => {
+            const rph = pax['ota:TravelerRefNumber']._attributes.RPH;
+            const matchingFareBase = zedFareBaseArray.find(fb => fb._attributes.passengerID === rph);
+            return matchingFareBase?._attributes.fareBaseCode || 'YIDFLBK';
+        });
         
+        const travelerRefsForGroup = travelersInGroup.map(pax => ({ 
+            _attributes: { RPH: pax['ota:TravelerRefNumber']._attributes.RPH }
+        }));
+
+        let baseFarePerTraveler = 0;
+        let taxesPerTraveler = [];
+        const adultBaseFare = 15.00;
+
+        // --- LÓGICA DE PRECIFICAÇÃO COM A REGRA DA TAXA OB ---
+        if ((ptc === 'ADT' && (zedType === 'ZEA' || zedType === 'ZED'))) {
+            baseFarePerTraveler = adultBaseFare;
+            taxesPerTraveler = [ { TaxCode: "AK", Amount: 6.00 }, { TaxCode: "C2", Amount: 1.25 }, { TaxCode: "OB", Amount: 1.95 } ];
+        } else if (ptc === 'CHD' && zedType === 'ZEC') {
+            baseFarePerTraveler = adultBaseFare * 0.75;
+            taxesPerTraveler = [ { TaxCode: "AK", Amount: 6.00 }, { TaxCode: "OB", Amount: 1.95 } ];
+        } else if (ptc === 'INF' && zedType === 'ZEI') {
+            baseFarePerTraveler = 0.00;
+            // CORREÇÃO: Bebês pagam apenas a taxa AK
+            taxesPerTraveler = [ { TaxCode: "AK", Amount: 6.00 } ];
+        }
+        
+        const totalTaxesPerTraveler = taxesPerTraveler.reduce((sum, tax) => sum + tax.Amount, 0);
+        const totalFarePerTraveler = baseFarePerTraveler + totalTaxesPerTraveler;
+
+        overallTotalBaseFare += baseFarePerTraveler * quantity;
+        overallTotalTaxes += totalTaxesPerTraveler * quantity;
+        overallTotalFare += totalFarePerTraveler * quantity;
+
+        const firstSegment = segmentsArray[0];
+        const fareCalcString = `${firstSegment['ota:DepartureAirport']._attributes.LocationCode} ${firstSegment['ota:OperatingAirline']._attributes.Code} ${firstSegment['ota:ArrivalAirport']._attributes.LocationCode} ${baseFarePerTraveler.toFixed(2)}USD END`;
+
         return {
-            'ota:PassengerTypeQuantity': { _attributes: { Quantity: "1", Code: ptc } },
-            // 1. CORREÇÃO: Usa o FareBasisCode do exemplo válido.
-            'ota:FareBasisCodes': { 'ota:FareBasisCode': 'G' },
-            'ota:TravelerRefNumber': { _attributes: { RPH: rph } },
+            'ota:PassengerTypeQuantity': { _attributes: { Quantity: quantity.toString(), Code: ptc } },
+            'ota:FareBasisCodes': { 'ota:FareBasisCode': fareBasisCodesForGroup },
+            'ota:TravelerRefNumber': travelerRefsForGroup,
             'ota:PassengerFare': {
                 _attributes: { NegotiatedFare: "false" },
-                // 3. CORREÇÃO: Usa os valores e a moeda (USD) do exemplo válido.
-                'ota:BaseFare': { _attributes: { Amount: "78.35", CurrencyCode: "USD", DecimalPlaces: "2" } },
+                'ota:BaseFare': { _attributes: { Amount: baseFarePerTraveler.toFixed(2), CurrencyCode: "USD", DecimalPlaces: "2" } },
                 'ota:Taxes': {
-                    _attributes: { Amount: "16.66", CurrencyCode: "USD", DecimalPlaces: "2" },
-                    'ota:Tax': [
-                        { _attributes: { TaxCode: "OB", Amount: "16.66", CurrencyCode: "USD", DecimalPlaces: "2" } },
-                    ]
+                    _attributes: { Amount: totalTaxesPerTraveler.toFixed(2), CurrencyCode: "USD", DecimalPlaces: "2" },
+                    'ota:Tax': taxesPerTraveler.map(tax => ({_attributes: { TaxCode: tax.TaxCode, Amount: tax.Amount.toFixed(2), CurrencyCode: "USD", DecimalPlaces: "2" }}))
                 },
-                'ota:TotalFare': { _attributes: { Amount: "95.01", CurrencyCode: "USD", DecimalPlaces: "2" } }
-                // 2. CORREÇÃO: A tag <UnstructuredFareCalc> foi REMOVIDA.
+                'ota:TotalFare': { _attributes: { Amount: totalFarePerTraveler.toFixed(2), CurrencyCode: "USD", DecimalPlaces: "2" } },
+                'ota:UnstructuredFareCalc': { _text: fareCalcString }
             },
             'ota:TicketDesignators': { 'ota:TicketDesignator': segmentsArray.map(s => ({ _attributes: { FlightRefRPH: s._attributes.RPH } }))}
         };
     });
 
-    // Monta o corpo da resposta final
     const responseBody = {
         'ns2:pricingResponse': {
-            _attributes: { 'xmlns:ns2': "http://service.resadapter.myidtravel.lhsystems.com", 'xmlns:myid': "http://bos.service.resadapter.myidtravel.lhsystems.com", 'xmlns:ota': "http://www.opentravel.org/OTA/2003/05" },
+            _attributes: { 
+                'xmlns:ns2': "http://service.resadapter.myidtravel.lhsystems.com", 
+                'xmlns:myid': "http://bos.service.resadapter.myidtravel.lhsystems.com", 
+                'xmlns:ota': "http://www.opentravel.org/OTA/2003/05" 
+            },
             'myid:employeeData': employeeData,
             'ota:OTA_AirPriceRS': {
                 _attributes: { TimeStamp: new Date().toISOString(), EchoToken: echoToken, Target: "Test", Version: "1.1" },
@@ -410,9 +460,9 @@ function pricing(soapBody) {
                         'ota:AirItineraryPricingInfo': {
                             'ota:ItinTotalFare': {
                                 _attributes: { NegotiatedFare: "false" },
-                                'ota:BaseFare': { _attributes: { Amount: "78.35", CurrencyCode: "USD", DecimalPlaces: "2" } },
-                                'ota:Taxes': { _attributes: { Amount: "16.66", CurrencyCode: "USD", DecimalPlaces: "2" } },
-                                'ota:TotalFare': { _attributes: { Amount: "95.01", CurrencyCode: "USD", DecimalPlaces: "2" } }
+                                'ota:BaseFare': { _attributes: { Amount: overallTotalBaseFare.toFixed(2), CurrencyCode: "USD", DecimalPlaces: "2" } },
+                                'ota:Taxes': { _attributes: { Amount: overallTotalTaxes.toFixed(2), CurrencyCode: "USD", DecimalPlaces: "2" } },
+                                'ota:TotalFare': { _attributes: { Amount: overallTotalFare.toFixed(2), CurrencyCode: "USD", DecimalPlaces: "2" } }
                             },
                             'ota:PTC_FareBreakdowns': { 'ota:PTC_FareBreakdown': ptcBreakdowns }
                         }
@@ -423,6 +473,281 @@ function pricing(soapBody) {
     };
     return responseBody;
 }
+*/
+
+
+function pricing(soapBody) {
+    const pricingRequest = soapBody['ns2:pricingRequest'];
+    const otaRequest = pricingRequest['ota:OTA_AirPriceRQ'];
+    const employeeData = pricingRequest['myid:employeeData'];
+    
+    const echoToken = otaRequest?._attributes?.EchoToken;
+    const itineraryFromRequest = otaRequest['ota:AirItinerary'];
+    
+    const zedFareBaseNode = pricingRequest['myid:ZEDFareBase'];
+    const zedFareBaseArray = Array.isArray(zedFareBaseNode) ? zedFareBaseNode : [zedFareBaseNode];
+    
+    const travelersNode = otaRequest?.['ota:TravelerInfoSummary']?.['ota:AirTravelerAvail'] || [];
+    const travelersArray = Array.isArray(travelersNode) ? travelersNode : [travelersNode];
+    
+    const segmentsNode = itineraryFromRequest?.['ota:OriginDestinationOptions']?.['ota:OriginDestinationOption']?.['ota:FlightSegment'] || [];
+    const segmentsArray = Array.isArray(segmentsNode) ? segmentsNode : [segmentsNode];
+
+    const totalPassengers = travelersArray.length;
+    segmentsArray.forEach(segment => {
+        segment._attributes.NumberInParty = totalPassengers.toString();
+    });
+
+    // 1. Encontra o voo específico que está sendo precificado no nosso schedule
+    const currentSegment = segmentsArray[0];
+    const flightDetails = MOCK_FLIGHT_SCHEDULE.find(
+        f => f.origin === currentSegment['ota:DepartureAirport']._attributes.LocationCode &&
+             f.destination === currentSegment['ota:ArrivalAirport']._attributes.LocationCode &&
+             f.flightNumber === currentSegment['ota:OperatingAirline']._attributes.FlightNumber
+    );
+
+    if (!flightDetails) {
+        console.error("ERRO: Voo não encontrado na base de dados.");
+        return { Error: "Flight route not found in database." };
+    }
+
+    // 2. Agrupa os passageiros por PassengerTypeCode (ADT, CHD, INF)
+    const groupedTravelers = travelersArray.reduce((acc, traveler) => {
+        const pax = traveler['ota:AirTraveler'];
+        const ptc = pax._attributes.PassengerTypeCode;
+        if (!acc[ptc]) { acc[ptc] = []; }
+        acc[ptc].push(pax);
+        return acc;
+    }, {});
+    
+    let overallTotalFare = 0, overallTotalBaseFare = 0, overallTotalTaxes = 0;
+
+    // 3. Itera sobre os GRUPOS para criar um breakdown para cada TIPO de passageiro
+    const ptcBreakdowns = Object.keys(groupedTravelers).map(ptc => {
+        const travelersInGroup = groupedTravelers[ptc];
+        const quantity = travelersInGroup.length;
+
+        const fareBasisCodesForGroup = travelersInGroup.map(pax => {
+            const rph = pax['ota:TravelerRefNumber']._attributes.RPH;
+            const matchingFareBase = zedFareBaseArray.find(fb => fb._attributes.passengerID === rph);
+            return matchingFareBase?._attributes.fareBaseCode || 'YIDFLBK';
+        });
+        
+        const travelerRefsForGroup = travelersInGroup.map(pax => ({ 
+            _attributes: { RPH: pax['ota:TravelerRefNumber']._attributes.RPH }
+        }));
+
+        let baseFarePerTraveler = 0;
+        const allFlightTaxes = Object.keys(flightDetails.taxes).map(code => ({ TaxCode: code, Amount: flightDetails.taxes[code] }));
+        let taxesPerTraveler = [];
+        const adultBaseFare = 15.00;
+
+        // 4. Aplica as regras de negócio para cada grupo
+        switch (ptc) {
+            case 'ADT':
+                baseFarePerTraveler = adultBaseFare;
+                taxesPerTraveler = allFlightTaxes; // Adulto paga todas as taxas do voo
+                break;
+            case 'CHD':
+                baseFarePerTraveler = adultBaseFare * 0.75; // Desconto de 25%
+                // Criança é isenta de ZI e CL
+                taxesPerTraveler = allFlightTaxes.filter(tax => tax.TaxCode !== 'ZI' && tax.TaxCode !== 'CL' && tax.TaxCode !== 'C2');
+                break;
+            case 'INF':
+                baseFarePerTraveler = 0.00;
+                // Bebê é isento de ZI, CL e OB
+                taxesPerTraveler = allFlightTaxes.filter(tax => tax.TaxCode === 'OB' && tax.TaxCode !== 'ZI' && tax.TaxCode !== 'CL' && tax.TaxCode !== 'C2');
+                break;
+            default:
+                baseFarePerTraveler = adultBaseFare;
+                taxesPerTraveler = allFlightTaxes;
+        }
+        
+        const totalTaxesPerTraveler = taxesPerTraveler.reduce((sum, tax) => sum + tax.Amount, 0);
+        const totalFarePerTraveler = baseFarePerTraveler + totalTaxesPerTraveler;
+
+        // 5. Calcula os totais para o GRUPO e os totais GERAIS
+        overallTotalBaseFare += baseFarePerTraveler * quantity;
+        overallTotalTaxes += totalTaxesPerTraveler * quantity;
+        overallTotalFare += totalFarePerTraveler * quantity;
+
+        const fareCalcString = `${flightDetails.origin} ${otaRequest['ota:POS']['ota:Source']._attributes.AirlineVendorID} ${flightDetails.destination} ${baseFarePerTraveler.toFixed(2)}USD END`;
+        const totalGroupFare = totalFarePerTraveler * quantity;
+
+        return {
+            'ota:PassengerTypeQuantity': { _attributes: { Quantity: quantity.toString(), Code: ptc } },
+            'ota:FareBasisCodes': { 'ota:FareBasisCode': fareBasisCodesForGroup },
+            'ota:TravelerRefNumber': travelerRefsForGroup,
+            'ota:PassengerFare': {
+                _attributes: { NegotiatedFare: "false" },
+                'ota:BaseFare': { _attributes: { Amount: baseFarePerTraveler.toFixed(2), CurrencyCode: "USD", DecimalPlaces: "2" } },
+                'ota:Taxes': {
+                    _attributes: { Amount: totalTaxesPerTraveler.toFixed(2), CurrencyCode: "USD", DecimalPlaces: "2" },
+                    'ota:Tax': taxesPerTraveler.map(tax => ({_attributes: { TaxCode: tax.TaxCode, Amount: tax.Amount.toFixed(2), CurrencyCode: "USD", DecimalPlaces: "2" }}))
+                },
+                'ota:TotalFare': { _attributes: { Amount: totalGroupFare.toFixed(2), CurrencyCode: "USD", DecimalPlaces: "2" } },
+                'ota:UnstructuredFareCalc': { _text: fareCalcString }
+            },
+            'ota:TicketDesignators': { 'ota:TicketDesignator': segmentsArray.map(s => ({ _attributes: { FlightRefRPH: s._attributes.RPH } }))}
+        };
+    });
+
+    // 6. Monta o corpo da resposta final com os totais gerais corretos
+    const responseBody = {
+        'ns2:pricingResponse': {
+            _attributes: { 
+                'xmlns:ns2': "http://service.resadapter.myidtravel.lhsystems.com", 
+                'xmlns:myid': "http://bos.service.resadapter.myidtravel.lhsystems.com", 
+                'xmlns:ota': "http://www.opentravel.org/OTA/2003/05" 
+            },
+            'myid:employeeData': employeeData,
+            'ota:OTA_AirPriceRS': {
+                _attributes: { TimeStamp: new Date().toISOString(), EchoToken: echoToken, Target: "Test", Version: "1.1" },
+                'ota:Success': {},
+                'ota:PricedItineraries': {
+                    'ota:PricedItinerary': {
+                        _attributes: { SequenceNumber: "1" },
+                        'ota:AirItinerary': itineraryFromRequest,
+                        'ota:AirItineraryPricingInfo': {
+                            'ota:ItinTotalFare': {
+                                _attributes: { NegotiatedFare: "false" },
+                                'ota:BaseFare': { _attributes: { Amount: overallTotalBaseFare.toFixed(2), CurrencyCode: "USD", DecimalPlaces: "2" } },
+                                'ota:Taxes': { _attributes: { Amount: overallTotalTaxes.toFixed(2), CurrencyCode: "USD", DecimalPlaces: "2" } },
+                                'ota:TotalFare': { _attributes: { Amount: overallTotalFare.toFixed(2), CurrencyCode: "USD", DecimalPlaces: "2" } }
+                            },
+                            'ota:PTC_FareBreakdowns': { 'ota:PTC_FareBreakdown': ptcBreakdowns }
+                        }
+                    }
+                }
+            }
+        }
+    };
+
+    return responseBody;
+}
+
+
+// function pricing(soapBody) {
+//     const pricingRequest = soapBody['ns2:pricingRequest'];
+//     const otaRequest = pricingRequest['ota:OTA_AirPriceRQ'];
+//     const employeeData = pricingRequest['myid:employeeData'];
+    
+//     // Extração de dados dinâmicos da requisição
+//     const echoToken = otaRequest?._attributes?.EchoToken;
+//     const itineraryFromRequest = otaRequest['ota:AirItinerary'];
+//     const requestedFareBasis = pricingRequest['myid:ZEDFareBase']?._attributes?.fareBaseCode || 'YIDFLBK';
+
+//     const travelersNode = otaRequest?.['ota:TravelerInfoSummary']?.['ota:AirTravelerAvail'] || [];
+//     const travelersArray = Array.isArray(travelersNode) ? travelersNode : [travelersNode];
+//     const segmentsNode = itineraryFromRequest?.['ota:OriginDestinationOptions']?.['ota:OriginDestinationOption']?.['ota:FlightSegment'] || [];
+//     const segmentsArray = Array.isArray(segmentsNode) ? segmentsNode : [segmentsNode];
+
+//     // Adiciona atributos necessários ao itinerário que será ecoado
+//     segmentsArray.forEach(segment => {
+//         segment._attributes.NumberInParty = "1";
+//     });
+
+//     const groupedTravelers = travelersArray.reduce((acc, traveler) => {
+//         const pax = traveler['ota:AirTraveler'];
+//         const ptc = pax._attributes.PassengerTypeCode;
+//         if (!acc[ptc]) { acc[ptc] = []; }
+//         acc[ptc].push(pax);
+//         return acc;
+//     }, {});
+    
+//     let overallTotalFare = 0, overallTotalBaseFare = 0, overallTotalTaxes = 0;
+
+//     // --- LÓGICA DE PRECIFICAÇÃO DIFERENCIADA POR TIPO DE PASSAGEIRO ---
+//     const ptcBreakdowns = Object.keys(groupedTravelers).map(ptc => {
+//         const travelersInGroup = groupedTravelers[ptc];
+//         const quantity = travelersInGroup.length;
+
+//         let mockBaseFare = 0;
+//         let mockTaxes = [];
+
+//         // Aplica regras de negócio diferentes para cada tipo de passageiro
+//         switch (ptc) {
+//             case 'ADT': // Adulto
+//                 mockBaseFare = 15.00; // REGRA 1: Tarifa base da Zona 1
+//                 mockTaxes = [ // Adulto paga todas as taxas
+//                     { TaxCode: "AK", Amount: 6.00 },
+//                     { TaxCode: "C2", Amount: 1.25 },
+//                     { TaxCode: "YN", Amount: 6.27 }
+//                 ];
+//                 break;
+//             case 'CHD': // Criança
+//                 mockBaseFare = 15.00; // Crianças geralmente pagam a mesma tarifa base ZED
+//                 mockTaxes = [ // REGRA 2: Criança paga um conjunto reduzido de taxas
+//                     { TaxCode: "AK", Amount: 6.00 }
+//                 ];
+//                 break;
+//             case 'INF': // Bebê de colo
+//                 mockBaseFare = 0.00; // Bebês de colo não pagam tarifa base
+//                 mockTaxes = [ // REGRA 2: Bebê paga apenas taxas essenciais
+//                     { TaxCode: "AK", Amount: 6.00 }
+//                 ];
+//                 break;
+//         }
+
+//         const totalTaxesForPTC = mockTaxes.reduce((sum, tax) => sum + tax.Amount, 0);
+//         const totalFarePerTraveler = mockBaseFare + totalTaxesForPTC;
+
+//         overallTotalBaseFare += mockBaseFare * quantity;
+//         overallTotalTaxes += totalTaxesForPTC * quantity;
+//         overallTotalFare += totalFarePerTraveler * quantity;
+
+//         return {
+//             'ota:PassengerTypeQuantity': { _attributes: { Quantity: quantity.toString(), Code: ptc } },
+//             'ota:FareBasisCodes': { 'ota:FareBasisCode': requestedFareBasis },
+//             'ota:TravelerRefNumber': travelersInGroup.map(pax => ({ _attributes: { RPH: pax['ota:TravelerRefNumber']._attributes.RPH }})),
+//             'ota:PassengerFare': {
+//                 _attributes: { NegotiatedFare: "false" },
+//                 'ota:BaseFare': { _attributes: { Amount: mockBaseFare.toFixed(2), CurrencyCode: "USD", DecimalPlaces: "2" } },
+//                 'ota:Taxes': {
+//                     _attributes: { Amount: totalTaxesForPTC.toFixed(2), CurrencyCode: "USD", DecimalPlaces: "2" },
+//                     'ota:Tax': mockTaxes.map(tax => ({_attributes: { TaxCode: tax.TaxCode, Amount: tax.Amount.toFixed(2), CurrencyCode: "USD", DecimalPlaces: "2" }}))
+//                 },
+//                 'ota:TotalFare': { _attributes: { Amount: totalFarePerTraveler.toFixed(2), CurrencyCode: "USD", DecimalPlaces: "2" } }
+//             },
+//             'ota:TicketDesignators': { 'ota:TicketDesignator': segmentsArray.map(s => ({ _attributes: { FlightRefRPH: s._attributes.RPH } }))}
+//         };
+//     });
+
+//     // Monta o corpo da resposta final
+//     const responseBody = {
+//         'ns2:pricingResponse': {
+//             _attributes: { 'xmlns:ns2': "http://service.resadapter.myidtravel.lhsystems.com", 'xmlns:myid': "http://bos.service.resadapter.myidtravel.lhsystems.com", 'xmlns:ota': "http://www.opentravel.org/OTA/2003/05" },
+//             'myid:employeeData': employeeData,
+//             'ota:OTA_AirPriceRS': {
+//                 _attributes: { TimeStamp: new Date().toISOString(), EchoToken: echoToken, Target: "Test", Version: "1.1" },
+//                 'ota:Success': {},
+//                 'ota:PricedItineraries': {
+//                     'ota:PricedItinerary': {
+//                         _attributes: { SequenceNumber: "1" },
+//                         'ota:AirItinerary': itineraryFromRequest,
+//                         'ota:AirItineraryPricingInfo': {
+//                             'ota:ItinTotalFare': {
+//                                 _attributes: { NegotiatedFare: "false" },
+//                                 'ota:BaseFare': { _attributes: { Amount: "78.35", CurrencyCode: "USD", DecimalPlaces: "2" } },
+//                                 'ota:Taxes': { 
+//                                     _attributes: { Amount: "30.64", CurrencyCode: "USD", DecimalPlaces: "2" },
+//                                     'ota:Tax': [ 
+//                                         { _attributes: { TaxCode: "AY", Amount: "5.66", CurrencyCode: "USD", DecimalPlaces: "2" } },
+//                                         { _attributes: { TaxCode: "OB", Amount: "1.95", CurrencyCode: "USD", DecimalPlaces: "2" } },
+//                                         { _attributes: { TaxCode: "US", Amount: "23.03", CurrencyCode: "USD", DecimalPlaces: "2" } }
+//                                     ] 
+//                                 },                                
+//                                 'ota:TotalFare': { _attributes: { Amount: "108.99", CurrencyCode: "USD", DecimalPlaces: "2" } }
+//                             },
+//                             'ota:PTC_FareBreakdowns': { 'ota:PTC_FareBreakdown': ptcBreakdowns }
+//                         }
+//                     }
+//                 }
+//             }
+//         }
+//     };
+//     return responseBody;
+// }
 
 // /**
 //  * Manipula a requisição de retrieveBooking.
@@ -456,8 +781,8 @@ function pricing(soapBody) {
 //                         'OriginDestinationOptions': {
 //                             'OriginDestinationOption': {
 //                                 'FlightSegment': [
-//                                     { _attributes: { ArrivalDateTime: "2025-12-20T05:25:00", DepartureDateTime: "2025-12-20T01:10:00", RPH: "1", ResBookDesigCode: "N", Status: "10" }, 'DepartureAirport': { _attributes: { LocationCode: 'VVI' } }, 'ArrivalAirport': { _attributes: { LocationCode: 'CBB' } }, 'OperatingAirline': { _attributes: { Code: 'ES', FlightNumber: '203' } } },
-//                                     { _attributes: { ArrivalDateTime: "2025-12-23T06:50:00", DepartureDateTime: "2025-12-22T11:25:00", RPH: "2", ResBookDesigCode: "N", Status: "10" }, 'DepartureAirport': { _attributes: { LocationCode: 'CBB' } }, 'ArrivalAirport': { _attributes: { LocationCode: 'VVI' } }, 'OperatingAirline': { _attributes: { Code: 'ES', FlightNumber: '204' } } }
+//                                     { _attributes: { ArrivalDateTime: "2025-12-20T05:25:00", DepartureDateTime: "2025-12-20T01:10:00", RPH: "1", ResBookDesigCode: "N", Status: "10" }, 'DepartureAirport': { _attributes: { LocationCode: 'VVI' } }, 'ArrivalAirport': { _attributes: { LocationCode: 'CBB' } }, 'OperatingAirline': { _attributes: { Code: '8J', FlightNumber: '203' } } },
+//                                     { _attributes: { ArrivalDateTime: "2025-12-23T06:50:00", DepartureDateTime: "2025-12-22T11:25:00", RPH: "2", ResBookDesigCode: "N", Status: "10" }, 'DepartureAirport': { _attributes: { LocationCode: 'CBB' } }, 'ArrivalAirport': { _attributes: { LocationCode: 'VVI' } }, 'OperatingAirline': { _attributes: { Code: '8J', FlightNumber: '204' } } }
 //                                 ]
 //                             }
 //                         }

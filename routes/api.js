@@ -156,6 +156,28 @@ router.get('/', (req, res) => {
     }
 });
 
+// Rota GET para arquivos .xsd diretamente
+router.get('/:xsdFileName', (req, res) => {
+  const fileName = req.params.xsdFileName;
+
+  //Verificar se é um arquivo xsd valido
+  if (!fileName.endsWith('.xsd')){
+    return res.status(404).send('File not found');
+  }
+
+  const xsdPath = path.join(__dirname, '..', 'schemas', fileName);
+
+  fs.readFile(xsdPath, 'utf-8', (err, data) => {
+    if (err) {
+      console.error('Erro ao ler o arquivo XSD:', err);
+      return res.status(404).send('File not found');
+    }
+
+    res.set('Content-Type', 'application/xml');
+    res.send(data);
+    
+  });
+});
 
 const defaultPage = (env) => `
     <!doctype html>
